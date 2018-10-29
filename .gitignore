@@ -2,6 +2,8 @@ venv/
 secret.txt
 NH101v2/settings/local.py
 .vscode/
+static/webpack_bundles
+webpack-stats.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
