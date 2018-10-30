@@ -17,8 +17,11 @@ export default class ComputerKeyboard extends Component {
     }
 
     handleKeyUp (e) {
+        const numberOfKeys = this.props.keyboard.currentKeys.length
         this.props.keyUp(e.keyCode)
-        this.props.gateOff()
+        if (numberOfKeys === 1) {
+            this.props.gateOff()
+        }
     }
 
     componentDidMount () {

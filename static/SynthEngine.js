@@ -35,7 +35,7 @@ export default class SynthEngine extends Component {
         this.frequencyFromNoteNumber = this.frequencyFromNoteNumber.bind(this)
     }
 
-    componentDidUpdate (prevProps, prevState) {        
+    componentDidUpdate (prevProps, prevState) {
         const { currentKeys } = this.props.keyboard
         if (this.props.keyboard.gate === true) {
             const key = currentKeys[currentKeys.length - 1]
