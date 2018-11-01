@@ -1,6 +1,3 @@
-// var AudioContext = window.AudioContext || window.webkitAudioContext;
-// var audioCtx = new AudioContext();
-
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'

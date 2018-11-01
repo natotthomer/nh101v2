@@ -1,7 +1,7 @@
 import {
     KEY_DOWN, KEY_UP, GATE_ON, GATE_OFF
 } from '../constants/keyboard-constants'
-    
+
 const _nullKeyboard = {
     currentKeys: [],
     gate: false
