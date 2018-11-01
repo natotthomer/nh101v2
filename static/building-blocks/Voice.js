@@ -3,8 +3,9 @@ import { buildVCA } from './VCA'
 import { buildVCF } from './VCF'
 
 export default class Voice {
-    constructor (audioContext) {
+    constructor (audioContext, freqMultiplier = 1) {
         this.audioContext = audioContext
+        this.freqMultiplier = freqMultiplier
 
         this.oscillator = buildVCO(audioContext)
         this.filter = buildVCF(audioContext)
@@ -21,7 +22,7 @@ export default class Voice {
     }
 
     updateOscillatorFrequency (newValue, atTime = this.audioContext.currentTime) {
-        this.oscillator.frequency.setValueAtTime(newValue, atTime)
+        this.oscillator.frequency.setValueAtTime(newValue * this.freqMultiplier, atTime)
     }
 
     updateAmpliferGain (newValue, atTime = this.audioContext.currentTime) {
