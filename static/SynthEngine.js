@@ -1,19 +1,16 @@
 import React, { Component } from 'react'
 
-const REGISTERED_KEYS = [65, 87, 83, 69, 68, 70, 84, 71, 89, 72, 85, 74, 75, 79, 76, 80, 186]
-
-window.onload = function () {
-
-    
-    
-}
+import { REGISTERED_KEYS } from './constants/keyboard-constants'
+import Voice from './building-blocks/Voice'
+import { buildCanvas } from './synth-charts'
+import { frequencyFromNoteNumber } from './utils'
 
 export default class SynthEngine extends Component {
     constructor (props) {
         super(props)
 
         this.state = {
-            attackTime: 0.001,
+            attackTime: 1.0,
             decayTime: 0.1,
             releaseTime: 0.001,
             sustainLevel: 0.001,
@@ -24,21 +21,18 @@ export default class SynthEngine extends Component {
             gate: false
         }
 
-        this.oscillatorNode = this.props.audioContext.createOscillator();
-        this.gainNode = this.props.audioContext.createGain();
+        this.voice = new Voice(this.props.audioContext)
 
-        this.gainNode.gain.setValueAtTime(0, this.props.audioContext.currentTime)
+        // this.updateAttackTime = this.updateAttackTime.bind(this)
+        // this.updateDecayTime = this.updateDecayTime.bind(this)
+        // this.updateSustainLevel = this.updateSustainLevel.bind(this)
+        // this.updateReleaseTime = this.updateReleaseTime.bind(this)
+        this.triggerEnvelope = this.triggerEnvelope.bind(this)
+        this.triggerReleaseStage = this.triggerReleaseStage.bind(this)
+    }
 
-        this.oscillatorNode.type = 'triangle'
-        this.oscillatorNode.start()
-        this.oscillatorNode.connect(this.gainNode)
-        this.gainNode.connect(this.props.audioContext.destination)
-
-        this.updateAttackTime = this.updateAttackTime.bind(this)
-        this.updateDecayTime = this.updateDecayTime.bind(this)
-        this.updateSustainLevel = this.updateSustainLevel.bind(this)
-        this.updateReleaseTime = this.updateReleaseTime.bind(this)
-        this.frequencyFromNoteNumber = this.frequencyFromNoteNumber.bind(this)
+    componentDidMount () {
+        buildCanvas(this.voice)
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -48,80 +42,30 @@ export default class SynthEngine extends Component {
         if (this.props.keyboard.gate === true) {
             const key = currentKeys[currentKeys.length - 1]
             if (REGISTERED_KEYS.includes(key) && this.state.currentKey !== key) {
-                this.setState({ currentKey: key, triggerStartTime: this.props.audioContext.currentTime, gate: true }, () => {
-                    console.log('blah')
-                    const noteNumber = REGISTERED_KEYS.indexOf(key) + (12 * this.state.octave)
-                    this.oscillatorNode.frequency.setValueAtTime(this.frequencyFromNoteNumber(noteNumber), this.props.audioContext.currentTime)
-                    this.gainNode.gain.cancelScheduledValues(this.props.audioContext.currentTime)
-                    this.gainNode.gain.linearRampToValueAtTime(0, this.props.audioContext.currentTime)
-                    this.gainNode.gain.linearRampToValueAtTime(1, this.props.audioContext.currentTime + this.state.attackTime)
-                    this.gainNode.gain.linearRampToValueAtTime(this.state.sustainLevel, this.props.audioContext.currentTime + this.state.attackTime + this.state.decayTime)
-                })
+                this.triggerEnvelope(key)
             }
         } else if (this.props.keyboard.gate === false && prevProps.keyboard.gate === true) {
-            console.log('other')
-            this.setState({ triggerStartTime: null, gate: false })
-            this.gainNode.gain.cancelAndHoldAtTime(this.props.audioContext.currentTime)
-            this.gainNode.gain.linearRampToValueAtTime(0, this.props.audioContext.currentTime + this.state.releaseTime)
-            this.setState({ currentKey: null })
+            this.triggerReleaseStage()
         }
     }
 
-    componentDidMount () {
-        CanvasJS.addColorSet("greenShades",
-                [//colorSet Array
-                "#9F4F0F",
-                "#008080",
-                "#2E8B57",
-                "#3CB371",
-                "#90EE90"                
-                ])
-        
-        var dps = []; // dataPoints
-        var chart = new CanvasJS.Chart("chartContainer", {
-            title :{
-                text: "Amplifier gain over time"
-            },
-            colorSet: "greenShades",
-            axisY: {
-                includeZero: false
-            },
-            axisX: {
-                labelAngle: -30
-            },
-            data: [{
-                type: "line",
-                dataPoints: dps
-            }]
-        });
-        
-        var xVal = 0;
-        var yVal = 100; 
-        var updateInterval = 1;
-        var dataLength = 2000; // number of dataPoints visible at any point
-        
-        var updateChart = function (count) {
-        
-            count = count || 1;
-        
-            for (var j = 0; j < count; j++) {
-                yVal = this.gainNode.gain.value
-                dps.push({
-                    x: xVal,
-                    y: yVal
-                });
-                xVal++;
-            }
-        
-                if (dps.length > dataLength) {
-                    dps.shift();
-                }
-        
-            chart.render();
-        }.bind(this);
-        
-        updateChart(dataLength);
-        setInterval(function(){updateChart()}, updateInterval);
+    triggerEnvelope (key) {
+        this.setState({ currentKey: key, triggerStartTime: this.props.audioContext.currentTime, gate: true }, () => {
+            const noteNumber = REGISTERED_KEYS.indexOf(key) + (12 * this.state.octave)
+            this.voice.updateOscillatorFrequency(frequencyFromNoteNumber(noteNumber))
+            this.voice.cancelAmplifierGainSchedule()
+            // this.voice.updateAmpliferGain(1)
+            this.voice.updateAmpliferGain(1, this.props.audioContext.currentTime + this.state.attackTime)
+            this.voice.updateAmpliferGain(this.state.sustainLevel, this.props.audioContext.currentTime + this.state.attackTime + this.state.decayTime)
+        })
+    }
+
+    triggerReleaseStage () {
+        this.setState({ triggerStartTime: null, gate: false })
+        this.voice.updateAmpliferGain(0)
+        this.voice.cancelAndHoldAtTime(this.props.audioContext.currentTime)
+        this.voice.updateAmpliferGain(0, this.props.audioContext.currentTime + this.state.releaseTime)
+        this.setState({ currentKey: null })
     }
 
     // updateAttackTime (e) {
@@ -145,21 +89,17 @@ export default class SynthEngine extends Component {
     //     })
     // }
 
-    updateDecayTime (e) {
-        this.setState({ decayTime: parseFloat(e.target.value) })
-    }
+    // updateDecayTime (e) {
+    //     this.setState({ decayTime: parseFloat(e.target.value) })
+    // }
 
-    updateSustainLevel (e) {
-        this.setState({ sustainLevel: parseFloat(e.target.value) })
-    }
+    // updateSustainLevel (e) {
+    //     this.setState({ sustainLevel: parseFloat(e.target.value) })
+    // }
 
-    updateReleaseTime (e) {
-        this.setState({ releaseTime: parseFloat(e.target.value) })
-    }
-
-    frequencyFromNoteNumber (noteNumber) {
-        return 440 * Math.pow(2, (noteNumber - 69) / 12)
-    }
+    // updateReleaseTime (e) {
+    //     this.setState({ releaseTime: parseFloat(e.target.value) })
+    // }
 
     render () {
         return (
@@ -167,10 +107,10 @@ export default class SynthEngine extends Component {
                 <div id="chartContainer" style={{ height: "300px", width: "100%" }}></div>
 
                 <div id="sliders">
-                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.attackTime} /> Attack {this.state.attackTime}
-                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.decayTime} /> Decay {this.state.decayTime}
-                    <input type='range' min={0.000} max={1.0} step={0.001} value={this.state.sustainLevel} /> Sustain {this.state.sustainLevel}
-                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.releaseTime} /> Release {this.state.releaseTime}
+                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.attackTime} name="attack-time" /> <label htmlFor="attack-time">Attack {this.state.attackTime}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.decayTime} name="decay-time" /> <label htmlFor="decay-time">Decay {this.state.decayTime}</label>
+                    <input type='range' min={0.000} max={1.0} step={0.001} readOnly value={this.state.sustainLevel} name="sustain-level" /> <label htmlFor="sustain-level">Sustain {this.state.sustainLevel}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.releaseTime} name="release-time" /> <label htmlFor="release-time">Release {this.state.releaseTime}</label>
                 </div>
                 <div>Current Controller: {this.state.controller}</div>
                 <div>Current Octave: {this.state.octave}</div>
