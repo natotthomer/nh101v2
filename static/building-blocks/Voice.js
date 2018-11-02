@@ -18,10 +18,10 @@ export default class Voice extends Component {
                     audioContext={this.props.audioContext}
                     currentKeys={this.props.currentKeys}
                     octave={this.props.octave} />
-                <VCA ref={vca => (this.vca = vca)}
+                <VCF ref={vcf => (this.vcf = vcf)}
                     audioContext={this.props.audioContext}
                     gate={this.props.gate} />
-                <VCF ref={vcf => (this.vcf = vcf)}
+                <VCA ref={vca => (this.vca = vca)}
                     audioContext={this.props.audioContext}
                     gate={this.props.gate} />
             </React.Fragment>
