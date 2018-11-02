@@ -10,8 +10,7 @@ export default class VCO extends React.Component {
 
         this.oscillator = this.props.audioContext.createOscillator()
 
-        this.oscillator.type = 'triangle'
-        this.oscillator.frequency.value = 440
+        this.oscillator.type = 'sawtooth'
         this.oscillator.start()
     }
 
@@ -19,7 +18,7 @@ export default class VCO extends React.Component {
         const currentKey = this.props.currentKeys[this.props.currentKeys.length - 1]
         const indexOfKey = REGISTERED_KEYS.indexOf(currentKey)
         if (indexOfKey >= 0) {
-            const noteNumber = indexOfKey + (12 * 4)
+            const noteNumber = indexOfKey + (12 * this.props.octave)
             const newValue = frequencyFromNoteNumber(noteNumber)
             this.oscillator.frequency.setValueAtTime(newValue, this.props.audioContext.currentTime)
         }
