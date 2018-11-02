@@ -1,8 +1,15 @@
-export const buildVCF = (audioContext) => {
-    const filter = audioContext.createBiquadFilter()
+import React from 'react'
 
-    filter.frequency.value = 1000
-    filter.Q.value = 5
+export default class VCF extends React.Component {
+    constructor (props) {
+        super(props)
 
-    return filter
-};
+        this.filter = this.props.audioContext.createBiquadFilter()
+        this.filter.frequency.value = 10000
+        this.filter.Q.value = 1.0
+    }
+
+    render () {
+        return null
+    }
+}

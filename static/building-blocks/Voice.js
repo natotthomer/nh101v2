@@ -1,47 +1,29 @@
-import { buildVCO } from './VCO'
-import { buildVCA } from './VCA'
-import { buildVCF } from './VCF'
+import React, { Component } from 'react'
 
-export default class Voice {
-    constructor (audioContext, freqMultiplier = 1) {
-        this.audioContext = audioContext
-        this.freqMultiplier = freqMultiplier
+import VCO from './VCO'
+import VCA from './VCA'
+import VCF from './VCF'
 
-        this.oscillator = buildVCO(audioContext)
-        this.filter = buildVCF(audioContext)
-        this.amplifier = buildVCA(audioContext)
-        
-        this.oscillator.connect(this.filter)
-        this.filter.connect(this.amplifier)
-        this.amplifier.connect(audioContext.destination)
-
-        this.updateOscillatorFrequency = this.updateOscillatorFrequency.bind(this)
-        this.updateAmpliferGain = this.updateAmpliferGain.bind(this)
-        this.updateFilterFrequency = this.updateFilterFrequency.bind(this)
-        this.updateFilterQ = this.updateFilterQ.bind(this)
+export default class Voice extends Component {
+    componentDidMount () {
+        this.vco.oscillator.connect(this.vcf.filter)
+        this.vcf.filter.connect(this.vca.amplifier)
+        this.vca.amplifier.connect(this.props.audioContext.destination)
     }
 
-    updateOscillatorFrequency (newValue, atTime = this.audioContext.currentTime) {
-        this.oscillator.frequency.setValueAtTime(newValue * this.freqMultiplier, atTime)
-    }
-
-    updateAmpliferGain (newValue, atTime = this.audioContext.currentTime) {
-        this.amplifier.gain.linearRampToValueAtTime(newValue, atTime)
-    }
-
-    cancelAmplifierGainSchedule (atTime = this.audioContext.currentTime) {
-        this.amplifier.gain.cancelScheduledValues(this.audioContext.currentTime)
-    }
-
-    updateFilterFrequency (newValue, atTime = this.audioContext.currentTime) {
-        this.filter.frequency.linearRampToValueAtTime(newValue, atTime)
-    }
-
-    updateFilterQ (newValue, atTime = this.audioContext.currentTime) {
-        this.filter.Q.linearRampToValueAtTime(newValue, atTime)
-    }
-
-    cancelAndHoldAtTime (atTime = this.audioContext.currentTime) {
-        this.amplifier.gain.cancelAndHoldAtTime(atTime)
+    render () {
+        return (
+            <React.Fragment>
+                <VCO ref={vco => (this.vco = vco)}
+                    audioContext={this.props.audioContext}
+                    currentKeys={this.props.currentKeys} />
+                <VCA ref={vca => (this.vca = vca)}
+                    audioContext={this.props.audioContext}
+                    gate={this.props.gate} />
+                <VCF ref={vcf => (this.vcf = vcf)}
+                    audioContext={this.props.audioContext}
+                    gate={this.props.gate} />
+            </React.Fragment>
+        )
     }
 }

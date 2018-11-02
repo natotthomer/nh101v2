@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { REGISTERED_KEYS, RETRIGGER_MODES } from './constants/keyboard-constants'
-import Voice from './building-blocks/Voice'
+import VoiceContainer from './building-blocks/Voice-container'
 import { buildCanvas } from './synth-charts'
 import { frequencyFromNoteNumber } from './utils'
 
@@ -22,69 +22,10 @@ export default class SynthEngine extends Component {
             retrigger: RETRIGGER_MODES[0]
         }
 
-        this.voice = new Voice(this.props.audioContext)
-
         // this.updateAttackTime = this.updateAttackTime.bind(this)
         // this.updateDecayTime = this.updateDecayTime.bind(this)
         // this.updateSustainLevel = this.updateSustainLevel.bind(this)
         // this.updateReleaseTime = this.updateReleaseTime.bind(this)
-        this.triggerEnvelope = this.triggerEnvelope.bind(this)
-        this.triggerReleaseStage = this.triggerReleaseStage.bind(this)
-        this.receivedNewGate = this.receivedNewGate.bind(this)
-        this.receivedGate = this.receivedGate.bind(this)
-    }
-
-    componentDidMount () {
-        buildCanvas(this.voice)
-    }
-
-    componentDidUpdate (prevProps, prevState) {
-        const { keyboard } = this.props
-        if (this.receivedNewGate(this.props, prevProps)) {
-            console.log('new gate')
-            const key = keyboard.currentKeys[keyboard.currentKeys.length - 1]
-            const noteNumber = REGISTERED_KEYS.indexOf(key) + (12 * this.state.octave)
-            this.voice.updateOscillatorFrequency(frequencyFromNoteNumber(noteNumber))
-            this.triggerEnvelope(keyboard.currentKeys[keyboard.currentKeys.length - 1])
-        } else if (this.receivedGate(this.props, prevProps)) {
-            debugger
-            if (this.state.retrigger === 'off') {
-                console.log('retrigger off')
-                const key = keyboard.currentKeys[keyboard.currentKeys.length - 1]
-                const noteNumber = REGISTERED_KEYS.indexOf(key) + (12 * this.state.octave)
-                this.voice.updateOscillatorFrequency(frequencyFromNoteNumber(noteNumber))
-            } else if (this.state.retrigger === 'hard') {
-                const key = keyboard.currentKeys[keyboard.currentKeys.length - 1]
-                const noteNumber = REGISTERED_KEYS.indexOf(key) + (12 * this.state.octave)
-                this.voice.updateOscillatorFrequency(frequencyFromNoteNumber(noteNumber))
-            }
-        }
-        
-    }
-
-    triggerEnvelope (key) {
-        this.setState({ currentKey: key, triggerStartTime: this.props.audioContext.currentTime, gate: true }, () => {
-            this.voice.cancelAmplifierGainSchedule()
-            // this.voice.updateAmpliferGain(1)
-            this.voice.updateAmpliferGain(1, this.props.audioContext.currentTime + this.state.attackTime)
-            this.voice.updateAmpliferGain(this.state.sustainLevel, this.props.audioContext.currentTime + this.state.attackTime + this.state.decayTime)
-        })
-    }
-
-    triggerReleaseStage () {
-        this.setState({ triggerStartTime: null, gate: false })
-        this.voice.updateAmpliferGain(0)
-        this.voice.cancelAndHoldAtTime(this.props.audioContext.currentTime)
-        this.voice.updateAmpliferGain(0, this.props.audioContext.currentTime + this.state.releaseTime)
-        this.setState({ currentKey: null })
-    }
-
-    receivedNewGate (currentProps, prevProps) {
-        return currentProps.keyboard.gate && !prevProps.keyboard.gate
-    }
-
-    receivedGate (currentProps, prevProps) {
-        return currentProps.keyboard.gate
     }
 
     // updateAttackTime (e) {
@@ -133,6 +74,10 @@ export default class SynthEngine extends Component {
                 </div>
                 <div>Current Controller: {this.state.controller}</div>
                 <div>Current Octave: {this.state.octave}</div>
+                <VoiceContainer 
+                    onRef={ref => (this.voice = ref)} 
+                    {...this.state} 
+                    audioContext={this.props.audioContext} />
             </div>
         )
     }

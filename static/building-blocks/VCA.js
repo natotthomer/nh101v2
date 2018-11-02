@@ -1,7 +1,22 @@
-export const buildVCA = (audioContext) => {
-    const amplifier = audioContext.createGain()
+import React from 'react'
 
-    amplifier.gain.setValueAtTime(0, audioContext.currentTime)
+export default class VCA extends React.Component {
+    constructor (props) {
+        super(props)
 
-    return amplifier
-};
+        this.amplifier = this.props.audioContext.createGain()
+        this.amplifier.gain.setValueAtTime(0, this.props.audioContext.currentTime)
+    }
+
+    componentDidUpdate (prevProps, prevState) {
+        if (this.props.gate) {
+            this.amplifier.gain.setValueAtTime(1, this.props.audioContext.currentTime)
+        } else {
+            this.amplifier.gain.setValueAtTime(0, this.props.audioContext.currentTime)
+        }
+    }
+    
+    render () {
+        return null
+    }
+}
