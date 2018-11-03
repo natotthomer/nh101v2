@@ -1,4 +1,4 @@
-export const buildCanvas = voice => {
+export const buildCanvas = amplifier => {
     CanvasJS.addColorSet("greenShades",
         [//colorSet Array
         "#9F4F0F",
@@ -36,7 +36,7 @@ export const buildCanvas = voice => {
     count = count || 1;
 
     for (var j = 0; j < count; j++) {
-        yVal = voice.amplifier.gain.value
+        yVal = amplifier.gain.value
         dps.push({
             x: xVal,
             y: yVal

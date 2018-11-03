@@ -14,16 +14,12 @@ export default class ComputerKeyboard extends Component {
     handleKeyDown (e) {
         if (this.props.keyboard.currentKeys.indexOf(e.keyCode) < 0 && REGISTERED_KEYS.includes(e.keyCode)) {
             this.props.keyDown(e.keyCode)
-            this.props.gateOn()
         }
     }
 
     handleKeyUp (e) {
         const numberOfKeys = this.props.keyboard.currentKeys.length
         this.props.keyUp(e.keyCode)
-        if (numberOfKeys === 1) {
-            this.props.gateOff()
-        }
     }
 
     componentDidMount () {
