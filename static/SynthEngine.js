@@ -17,16 +17,17 @@ export default class SynthEngine extends Component {
             octave: 4,
             currentKey: null,
             triggerStartTime: null,
-            retrigger: true
+            retrigger: false
         }
 
-        this.updateAmplifierAttackTime = this.updateAmplifierAttackTime.bind(this)
-        // this.updateAmplifierDecayTime = this.updateAmplifierDecayTime.bind(this)
-        // this.updateAmplifierSustainLevel = this.updateAmplifierSustainLevel.bind(this)
-        // this.updateAmplifierReleaseTime = this.updateAmplifierReleaseTime.bind(this)
+        this.handleAmplifierAttackTimeChange = this.handleAmplifierAttackTimeChange.bind(this)
+        // this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
+        // this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
+        // this.handleAmplifierReleaseTimeChange = this.handleAmplifierReleaseTimeChange.bind(this)
+        this.handleRetriggerChange = this.handleRetriggerChange.bind(this)
     }
 
-    updateAmplifierAttackTime (e) {
+    handleAmplifierAttackTimeChange (e) {
         let diff
         if (this.state.triggerStartTime) {
             diff = this.props.audioContext.currentTime - this.state.triggerStartTime
@@ -45,17 +46,21 @@ export default class SynthEngine extends Component {
         })
     }
 
-    // updateAmplifierDecayTime (e) {
+    // handleAmplifierDecayTimeChange (e) {
     //     this.setState({ amplifierDecayTime: parseFloat(e.target.value) })
     // }
 
-    // updateAmplifierSustainLevel (e) {
+    // handleAmplifierSustainLevelChange (e) {
     //     this.setState({ amplifierSustainLevel: parseFloat(e.target.value) })
     // }
 
-    // updateAmplifierReleaseTime (e) {
+    // handleAmplifierReleaseTimeChange (e) {
     //     this.setState({ amplifierReleaseTime: parseFloat(e.target.value) })
     // }
+
+    handleRetriggerChange (e) {
+        this.setState({ retrigger: !this.state.retrigger })
+    }
 
     render () {
         return (
@@ -63,10 +68,11 @@ export default class SynthEngine extends Component {
                 <div id="chartContainer" style={{ height: "300px", width: "100%" }}></div>
 
                 <div id="sliders">
-                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierAttackTime} onChange={this.updateAmplifierAttackTime} name="amplifier-attack-time" /> <label htmlFor="amplifier-attack-time">Attack {this.state.amplifierAttackTime}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierAttackTime} onChange={this.handleAmplifierAttackTimeChange} name="amplifier-attack-time" /> <label htmlFor="amplifier-attack-time">Attack {this.state.amplifierAttackTime}</label>
                     <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierDecayTime} name="amplifier-decay-time" /> <label htmlFor="amplifier-decay-time">Decay {this.state.amplifierDecayTime}</label>
                     <input type='range' min={0.000} max={1.0} step={0.001} readOnly value={this.state.amplifierSustainLevel} name="amplifier-sustain-level" /> <label htmlFor="amplifier-sustain-level">Sustain {this.state.amplifierSustainLevel}</label>
-                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierReleaseTime} name="amplifier-`release-time" /> <label htmlFor="amplifier-release-time">Release {this.state.amplifierReleaseTime}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierReleaseTime} name="amplifier-release-time" /> <label htmlFor="amplifier-release-time">Release {this.state.amplifierReleaseTime}</label>
+                    <input type='button' name="retrigger-mode" onClick={this.handleRetriggerChange} value={`Retrigger ${this.state.retrigger ? 'on' : 'off'}`} />
                 </div>
                 <div>Current Controller: {this.state.controller}</div>
                 <div>Current Octave: {this.state.octave}</div>

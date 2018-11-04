@@ -17,17 +17,16 @@ export default class VCA extends React.Component {
     }
 
     componentDidUpdate (prevProps, prevState) {
-        console.log(this.props)
         const { audioContext, currentKeys, amplifierAttackTime } = this.props
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
         if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.retrigger) {
-            console.log('retrigger off')
         } else if (currentKeys.length > 0 && currentKey !== prevKey) {
+            this.cancelScheduledValues()
+            this.updateGain(0, audioContext.currentTime)
             this.updateGain(1, amplifierAttackTime + audioContext.currentTime, 'linear')
             this.updateGain(0, 0.1 + amplifierAttackTime + audioContext.currentTime, 'linear')
         } else if (currentKey !== prevKey) {
-            console.log('keys', this.props.currentKeys)
             this.cancelScheduledValues()
             this.updateGain(0)
         }
