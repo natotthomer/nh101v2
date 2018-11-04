@@ -5,6 +5,14 @@ import VCA from './VCA'
 import VCF from './VCF'
 
 export default class Voice extends Component {
+    constructor (props) {
+        super(props)
+
+        this.vco = null
+        this.vcf = null
+        this.vca = null
+    }
+    
     componentDidMount () {
         this.vco.oscillator.connect(this.vcf.filter)
         this.vcf.filter.connect(this.vca.amplifier)

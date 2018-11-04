@@ -10,6 +10,8 @@ export default class VCA extends React.Component {
         this.amplifier.gain.value = 0
 
         this.updateGain = this.updateGain.bind(this)
+        this.triggerEnvelope = this.triggerEnvelope.bind(this)
+        this.updateAttack = this.updateAttack.bind(this)
     }
 
     componentDidMount () {
@@ -17,10 +19,32 @@ export default class VCA extends React.Component {
     }
 
     componentDidUpdate (prevProps, prevState) {
+        
+        this.triggerEnvelope(prevProps, prevState)
+        if (this.props.amplifierAttackTime !== prevProps.amplifierAttackTime) {
+            this.updateAttack(prevProps, prevState)
+        }
+    }
+
+    updateAttack (prevProps, prevState) {
+        // let timeSinceTrigger = undefined
+        if (this.props.triggerStartTime) {
+            const timeSinceTrigger = this.props.audioContext.currentTime - this.props.triggerStartTime
+
+            const newRemainingAttackTime = this.props.amplifierAttackTime - timeSinceTrigger
+            this.amplifier.gain.cancelScheduledValues(this.props.audioContext.currentTime)
+            this.updateGain(1, newRemainingAttackTime + this.props.audioContext.currentTime, 'linear')
+        }
+    }
+
+    triggerEnvelope (prevProps, prevState) {
         const { audioContext, currentKeys, amplifierAttackTime } = this.props
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
+
         if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.retrigger) {
+            // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
+            // new key events, we just want to continue the envelope from where it left off
         } else if (currentKeys.length > 0 && currentKey !== prevKey) {
             this.cancelScheduledValues()
             this.updateGain(0, audioContext.currentTime)

@@ -27,23 +27,35 @@ export default class SynthEngine extends Component {
         this.handleRetriggerChange = this.handleRetriggerChange.bind(this)
     }
 
-    handleAmplifierAttackTimeChange (e) {
-        let diff
-        if (this.state.triggerStartTime) {
-            diff = this.props.audioContext.currentTime - this.state.triggerStartTime
+    componentDidUpdate (prevProps, prevState) {
+        if (this.props.keyboard.currentKeys.length !== prevProps.keyboard.currentKeys.length) {
+            this.setState({ triggerStartTime: this.props.audioContext.currentTime })
+        } else if (this.props.keyboard.currentKeys.length === 0 && this.state.triggerStartTime) {
+            this.setState({ triggerStartTime: null })
         }
-        // console.log('diff', this.state.amplifierAttackTime - parseFloat(e.target.value))
-        const oldAttackTime = this.state.amplifierAttackTime
-        const newAttackTime = parseFloat(e.target.value)
-        // console.log('new, old', newAttackTime, oldAttackTime)
-        this.setState({ amplifierAttackTime: newAttackTime }, () => {
-            if (diff !== undefined) {
-                const newTime = this.props.audioContext.currentTime + newAttackTime - diff
-                // console.log('newTime: ', newTime)
-                // console.log('currentTime', this.props.audioContext.currentTime)
-                this.gainNode.gain.linearRampToValueAtTime(1, newTime)
-            }
-        })
+    }
+
+    handleAmplifierAttackTimeChange (e) {
+        this.setState({ amplifierAttackTime: parseFloat(e.target.value) })
+        
+        // let diff
+        // if (this.state.triggerStartTime) {
+        //     diff = this.props.audioContext.currentTime - this.state.triggerStartTime
+        // }
+        // // console.log('diff', this.state.amplifierAttackTime - parseFloat(e.target.value))
+        // const oldAttackTime = this.state.amplifierAttackTime
+        // const newAttackTime = parseFloat(e.target.value)
+        // // console.log('new, old', newAttackTime, oldAttackTime)
+        // this.setState({ amplifierAttackTime: newAttackTime }, () => {
+        //     if (diff !== undefined) {
+        //         const newTime = this.props.audioContext.currentTime + newAttackTime - diff
+        //         // console.log('newTime: ', newTime)
+        //         // console.log('currentTime', this.props.audioContext.currentTime)
+        //         // console.log(this.voice.vca)
+        //         console.log(this.voice)
+        //         this.voice.vca.amplifier.gain.linearRampToValueAtTime(1, newTime)
+        //     }
+        // })
     }
 
     // handleAmplifierDecayTimeChange (e) {
@@ -77,7 +89,7 @@ export default class SynthEngine extends Component {
                 <div>Current Controller: {this.state.controller}</div>
                 <div>Current Octave: {this.state.octave}</div>
                 <VoiceContainer 
-                    onRef={ref => (this.voice = ref)} 
+                    ref={ref => (this.voice = ref)} 
                     {...this.state} 
                     audioContext={this.props.audioContext} />
             </div>
