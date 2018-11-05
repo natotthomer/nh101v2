@@ -46,29 +46,38 @@ export default class VCA extends React.Component {
         if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.attackStageEnd)) {
             const timeSinceTrigger = this.props.audioContext.currentTime - this.props.triggerStartTime
             const newRemainingAttackTime = this.props.amplifierAttackTime - timeSinceTrigger
-            const attackStageEnd = this.props.audioContext.currentTime + newRemainingAttackTime
-            const decayStageEnd = attackStageEnd + this.props.amplifierDecayTime
+            
+            let attackStageEnd = this.props.audioContext.currentTime + newRemainingAttackTime
+            let decayStageEnd = attackStageEnd + this.props.amplifierDecayTime
 
-            this.setState({ attackStageEnd, decayStageEnd })
-
+            
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
             if (attackStageEnd < this.props.audioContext.currentTime) {
-                this.updateGain(1)
-                this.setState({ 
-                    attackStageEnd: this.props.audioContext.currentTime, 
-                    decayStageEnd: this.props.audioContext.currentTime + this.props.amplifierDecayTime
-                })
+                attackStageEnd = this.props.audioContext.currentTime, 
+                decayStageEnd = this.props.audioContext.currentTime + this.props.amplifierDecayTime
             }
             this.updateGain(1, attackStageEnd, 'linear')
-
+            this.setState({ attackStageEnd, decayStageEnd })
             this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+
         }
     }
 
     updateDecay () {
-        if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd)) {
-            
+        if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd) && (this.props.audioContext.currentTime > this.state.attackStageEnd)) {
+            const timeSinceAttackStageEnded = this.props.audioContext.currentTime - this.state.attackStageEnd
+            const newRemainingDecayTime = this.props.amplifierDecayTime - this.state.attackStageEnd
+
+            let decayStageEnd = this.props.audioContext.currentTime + newRemainingDecayTime
+            this.cancelScheduledValues()
+            this.updateGain(this.amplifier.gain.value)
+            if (decayStageEnd < this.props.audioContext.currentTime) {
+                decayStageEnd = this.props.audioContext.currentTime
+            }
+
+            this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+            this.setState({ decayStageEnd })
         }
     }
 
