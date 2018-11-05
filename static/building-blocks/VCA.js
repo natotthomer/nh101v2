@@ -54,7 +54,7 @@ export default class VCA extends React.Component {
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
             if (attackStageEnd < this.props.audioContext.currentTime) {
-                attackStageEnd = this.props.audioContext.currentTime, 
+                attackStageEnd = this.props.audioContext.currentTime
                 decayStageEnd = this.props.audioContext.currentTime + this.props.amplifierDecayTime
             }
             this.updateGain(1, attackStageEnd, 'linear')
@@ -67,7 +67,7 @@ export default class VCA extends React.Component {
     updateDecay () {
         if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd) && (this.props.audioContext.currentTime > this.state.attackStageEnd)) {
             const timeSinceAttackStageEnded = this.props.audioContext.currentTime - this.state.attackStageEnd
-            const newRemainingDecayTime = this.props.amplifierDecayTime - this.state.attackStageEnd
+            const newRemainingDecayTime = this.props.amplifierDecayTime - timeSinceAttackStageEnded
 
             let decayStageEnd = this.props.audioContext.currentTime + newRemainingDecayTime
             this.cancelScheduledValues()
