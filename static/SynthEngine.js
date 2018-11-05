@@ -10,20 +10,20 @@ export default class SynthEngine extends Component {
 
         this.state = {
             amplifierAttackTime: 1.0,
-            amplifierDecayTime: 0.1,
-            amplifierReleaseTime: 0.001,
-            amplifierSustainLevel: 0.001,
+            amplifierDecayTime: 1.0,
+            amplifierSustainLevel: 0.2,
+            amplifierReleaseTime: 0.3,
             controller: 'keyboard',
             octave: 4,
             currentKey: null,
             triggerStartTime: null,
-            retrigger: false
+            retrigger: true
         }
 
         this.handleAmplifierAttackTimeChange = this.handleAmplifierAttackTimeChange.bind(this)
-        // this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
-        // this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
-        // this.handleAmplifierReleaseTimeChange = this.handleAmplifierReleaseTimeChange.bind(this)
+        this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
+        this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
+        this.handleAmplifierReleaseTimeChange = this.handleAmplifierReleaseTimeChange.bind(this)
         this.handleRetriggerChange = this.handleRetriggerChange.bind(this)
     }
 
@@ -37,38 +37,19 @@ export default class SynthEngine extends Component {
 
     handleAmplifierAttackTimeChange (e) {
         this.setState({ amplifierAttackTime: parseFloat(e.target.value) })
-        
-        // let diff
-        // if (this.state.triggerStartTime) {
-        //     diff = this.props.audioContext.currentTime - this.state.triggerStartTime
-        // }
-        // // console.log('diff', this.state.amplifierAttackTime - parseFloat(e.target.value))
-        // const oldAttackTime = this.state.amplifierAttackTime
-        // const newAttackTime = parseFloat(e.target.value)
-        // // console.log('new, old', newAttackTime, oldAttackTime)
-        // this.setState({ amplifierAttackTime: newAttackTime }, () => {
-        //     if (diff !== undefined) {
-        //         const newTime = this.props.audioContext.currentTime + newAttackTime - diff
-        //         // console.log('newTime: ', newTime)
-        //         // console.log('currentTime', this.props.audioContext.currentTime)
-        //         // console.log(this.voice.vca)
-        //         console.log(this.voice)
-        //         this.voice.vca.amplifier.gain.linearRampToValueAtTime(1, newTime)
-        //     }
-        // })
     }
 
-    // handleAmplifierDecayTimeChange (e) {
-    //     this.setState({ amplifierDecayTime: parseFloat(e.target.value) })
-    // }
+    handleAmplifierDecayTimeChange (e) {
+        this.setState({ amplifierDecayTime: parseFloat(e.target.value) })
+    }
 
-    // handleAmplifierSustainLevelChange (e) {
-    //     this.setState({ amplifierSustainLevel: parseFloat(e.target.value) })
-    // }
+    handleAmplifierSustainLevelChange (e) {
+        this.setState({ amplifierSustainLevel: parseFloat(e.target.value) })
+    }
 
-    // handleAmplifierReleaseTimeChange (e) {
-    //     this.setState({ amplifierReleaseTime: parseFloat(e.target.value) })
-    // }
+    handleAmplifierReleaseTimeChange (e) {
+        this.setState({ amplifierReleaseTime: parseFloat(e.target.value) })
+    }
 
     handleRetriggerChange (e) {
         this.setState({ retrigger: !this.state.retrigger })

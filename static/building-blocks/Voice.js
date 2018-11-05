@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import { buildCanvas } from '../synth-charts'
 import VCO from './VCO'
 import VCA from './VCA'
 import VCF from './VCF'
@@ -14,6 +15,7 @@ export default class Voice extends Component {
     }
     
     componentDidMount () {
+        buildCanvas(this.vca.amplifier)
         this.vco.oscillator.connect(this.vcf.filter)
         this.vcf.filter.connect(this.vca.amplifier)
         this.vca.amplifier.connect(this.props.audioContext.destination)
