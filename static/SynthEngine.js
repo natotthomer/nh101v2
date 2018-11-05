@@ -10,7 +10,7 @@ export default class SynthEngine extends Component {
 
         this.state = {
             amplifierAttackTime: 1.0,
-            amplifierDecayTime: 1.0,
+            amplifierDecayTime: 3.0,
             amplifierSustainLevel: 0.2,
             amplifierReleaseTime: 0.3,
             controller: 'keyboard',
@@ -62,9 +62,9 @@ export default class SynthEngine extends Component {
 
                 <div id="sliders">
                     <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierAttackTime} onChange={this.handleAmplifierAttackTimeChange} name="amplifier-attack-time" /> <label htmlFor="amplifier-attack-time">Attack {this.state.amplifierAttackTime}</label>
-                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierDecayTime} name="amplifier-decay-time" /> <label htmlFor="amplifier-decay-time">Decay {this.state.amplifierDecayTime}</label>
-                    <input type='range' min={0.000} max={1.0} step={0.001} readOnly value={this.state.amplifierSustainLevel} name="amplifier-sustain-level" /> <label htmlFor="amplifier-sustain-level">Sustain {this.state.amplifierSustainLevel}</label>
-                    <input type='range' min={0.001} max={10.0} step={0.001} readOnly value={this.state.amplifierReleaseTime} name="amplifier-release-time" /> <label htmlFor="amplifier-release-time">Release {this.state.amplifierReleaseTime}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierDecayTime} onChange={this.handleAmplifierDecayTimeChange} name="amplifier-decay-time" /> <label htmlFor="amplifier-decay-time">Decay {this.state.amplifierDecayTime}</label>
+                    <input type='range' min={0.000} max={1.0} step={0.001} value={this.state.amplifierSustainLevel} onChange={this.handleAmplifierSustainLevelChange} name="amplifier-sustain-level" /> <label htmlFor="amplifier-sustain-level">Sustain {this.state.amplifierSustainLevel}</label>
+                    <input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierReleaseTime} onChange={this.handleAmplifierReleaseTimeChange} name="amplifier-release-time" /> <label htmlFor="amplifier-release-time">Release {this.state.amplifierReleaseTime}</label>
                     <input type='button' name="retrigger-mode" onClick={this.handleRetriggerChange} value={`Retrigger ${this.state.retrigger ? 'on' : 'off'}`} />
                 </div>
                 <div>Current Controller: {this.state.controller}</div>
