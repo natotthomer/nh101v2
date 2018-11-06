@@ -18,6 +18,7 @@ export default class VCA extends React.Component {
         this.triggerEnvelope = this.triggerEnvelope.bind(this)
         this.updateAttack = this.updateAttack.bind(this)
         this.updateDecay = this.updateDecay.bind(this)
+        this.updateSustain = this.updateSustain.bind(this)
         this.loop = this.loop.bind(this)
     }
 
@@ -33,6 +34,8 @@ export default class VCA extends React.Component {
             this.updateAttack()
         } else if (this.props.amplifierDecayTime !== prevProps.amplifierDecayTime) {
             this.updateDecay()
+        } else if (this.props.amplifierSustainLevel !== prevProps.amplifierSustainLevel) {
+            this.updateSustain()
         }
     }
 
@@ -43,47 +46,70 @@ export default class VCA extends React.Component {
     }
 
     updateAttack () {
-        if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.attackStageEnd)) {
-            const timeSinceTrigger = this.props.audioContext.currentTime - this.props.triggerStartTime
-            const newRemainingAttackTime = this.props.amplifierAttackTime - timeSinceTrigger
+        const { triggerStartTime, audioContext, amplifierAttackTime, amplifierDecayTime, amplifierSustainLevel } = this.props
+
+        if (triggerStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
+            const timeSinceTrigger = audioContext.currentTime - triggerStartTime
+            const newRemainingAttackTime = amplifierAttackTime - timeSinceTrigger
             
-            let attackStageEnd = this.props.audioContext.currentTime + newRemainingAttackTime
-            let decayStageEnd = attackStageEnd + this.props.amplifierDecayTime
+            let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
+            let decayStageEnd = attackStageEnd + amplifierDecayTime
 
             
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
-            if (attackStageEnd < this.props.audioContext.currentTime) {
-                attackStageEnd = this.props.audioContext.currentTime
-                decayStageEnd = this.props.audioContext.currentTime + this.props.amplifierDecayTime
+            if (attackStageEnd < audioContext.currentTime) {
+                attackStageEnd = audioContext.currentTime
+                decayStageEnd = audioContext.currentTime + amplifierDecayTime
             }
             this.updateGain(1, attackStageEnd, 'linear')
             this.setState({ attackStageEnd, decayStageEnd })
-            this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+            this.updateGain(amplifierSustainLevel, decayStageEnd, 'linear')
 
         }
     }
 
     updateDecay () {
-        if (this.props.triggerStartTime && this.props.audioContext.currentTime < this.state.attackStageEnd) {
-            const decayStageEnd = this.state.attackStageEnd + this.props.amplifierDecayTime
+        const { triggerStartTime, audioContext, amplifierDecayTime, amplifierSustainLevel } = this.props
+
+        if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
+            const decayStageEnd = this.state.attackStageEnd + amplifierDecayTime
             
             this.amplifier.gain.cancelAndHoldAtTime(this.state.attackStageEnd)
-            this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+            this.amplifier.gain.setValueAtTime(this.amplifier.gain.value, audioContext.currentTime)
+            this.updateGain(amplifierSustainLevel, decayStageEnd, 'linear')
             this.setState({ decayStageEnd })
-        } else if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd) && (this.props.audioContext.currentTime > this.state.attackStageEnd)) {
-            const timeSinceAttackStageEnded = this.props.audioContext.currentTime - this.state.attackStageEnd
-            const newRemainingDecayTime = this.props.amplifierDecayTime - timeSinceAttackStageEnded
+        } else if (triggerStartTime && (audioContext.currentTime < this.state.decayStageEnd) && (audioContext.currentTime > this.state.attackStageEnd)) {
+            const timeSinceAttackStageEnded = audioContext.currentTime - this.state.attackStageEnd
+            const newRemainingDecayTime = amplifierDecayTime - timeSinceAttackStageEnded
 
-            let decayStageEnd = this.props.audioContext.currentTime + newRemainingDecayTime
+            let decayStageEnd = audioContext.currentTime + newRemainingDecayTime
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
-            if (decayStageEnd < this.props.audioContext.currentTime) {
-                decayStageEnd = this.props.audioContext.currentTime
+            if (decayStageEnd < audioContext.currentTime) {
+                decayStageEnd = audioContext.currentTime
             }
 
-            this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+            this.updateGain(amplifierSustainLevel, decayStageEnd, 'linear')
             this.setState({ decayStageEnd })
+        }
+    }
+
+    updateSustain () {
+        const { triggerStartTime, audioContext, amplifierSustainLevel, amplifierDecayTime } = this.props
+        if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
+            const decayStageEnd = this.state.attackStageEnd + amplifierDecayTime
+            
+            this.amplifier.gain.cancelAndHoldAtTime(this.state.attackStageEnd)
+            this.amplifier.gain.setValueAtTime(this.amplifier.gain.value, audioContext.currentTime)
+            this.updateGain(amplifierSustainLevel, decayStageEnd, 'linear')
+            this.setState({ decayStageEnd })
+        } else if (triggerStartTime && audioContext.currentTime < this.state.decayStageEnd) {
+            this.amplifier.gain.cancelScheduledValues(audioContext.currentTime)
+            this.amplifier.gain.setValueAtTime(this.amplifier.gain.value, audioContext.currentTime)
+            this.updateGain(amplifierSustainLevel, this.state.decayStageEnd, 'linear')
+        } else if (triggerStartTime) {
+            this.updateGain(amplifierSustainLevel)
         }
     }
 
