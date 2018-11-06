@@ -65,7 +65,13 @@ export default class VCA extends React.Component {
     }
 
     updateDecay () {
-        if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd) && (this.props.audioContext.currentTime > this.state.attackStageEnd)) {
+        if (this.props.triggerStartTime && this.props.audioContext.currentTime < this.state.attackStageEnd) {
+            const decayStageEnd = this.state.attackStageEnd + this.props.amplifierDecayTime
+            
+            this.amplifier.gain.cancelAndHoldAtTime(this.state.attackStageEnd)
+            this.updateGain(this.props.amplifierSustainLevel, decayStageEnd, 'linear')
+            this.setState({ decayStageEnd })
+        } else if (this.props.triggerStartTime && (this.props.audioContext.currentTime < this.state.decayStageEnd) && (this.props.audioContext.currentTime > this.state.attackStageEnd)) {
             const timeSinceAttackStageEnded = this.props.audioContext.currentTime - this.state.attackStageEnd
             const newRemainingDecayTime = this.props.amplifierDecayTime - timeSinceAttackStageEnded
 
@@ -91,7 +97,7 @@ export default class VCA extends React.Component {
         } = this.props
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
-
+        
         if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.retrigger) {
             // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
             // new key events, we just want to continue the envelope from where it left off
