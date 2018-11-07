@@ -179,7 +179,7 @@ export default class VCA extends React.Component {
         this.amplifier.gain.cancelScheduledValues(atTime)
     }
     
-    updateGain(newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
+    updateGain (newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
         switch (slopeType) {
             case 'exponential': {
                 // Will break if `newValue` is 0 and slopeType is `exponential` (needs to

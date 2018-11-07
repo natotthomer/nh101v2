@@ -15,7 +15,7 @@ export default class Voice extends Component {
     }
     
     componentDidMount () {
-        buildCanvas(this.vca.amplifier)
+        buildCanvas(this.vcf.filter.frequency)
         this.vco.oscillator.connect(this.vcf.filter)
         this.vcf.filter.connect(this.vca.amplifier)
         this.vca.amplifier.connect(this.props.audioContext.destination)
