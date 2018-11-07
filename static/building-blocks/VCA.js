@@ -8,6 +8,8 @@ export default class VCA extends React.Component {
             time: 0.0,
             attackStageEnd: null,
             decayStageEnd: null,
+            releaseStageEnd: null,
+            sustainStageEnd: null
         }
 
         this.amplifier = this.props.audioContext.createGain()
@@ -19,6 +21,7 @@ export default class VCA extends React.Component {
         this.updateAttack = this.updateAttack.bind(this)
         this.updateDecay = this.updateDecay.bind(this)
         this.updateSustain = this.updateSustain.bind(this)
+        this.updateRelease = this.updateRelease.bind(this)
         this.loop = this.loop.bind(this)
     }
 
@@ -36,6 +39,8 @@ export default class VCA extends React.Component {
             this.updateDecay()
         } else if (this.props.amplifierSustainLevel !== prevProps.amplifierSustainLevel) {
             this.updateSustain()
+        } else if (this.props.amplifierReleaseTime !== prevProps.amplifierReleaseTime) {
+            this.updateRelease()
         }
     }
 
@@ -54,7 +59,6 @@ export default class VCA extends React.Component {
             
             let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
             let decayStageEnd = attackStageEnd + amplifierDecayTime
-
             
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
@@ -65,7 +69,6 @@ export default class VCA extends React.Component {
             this.updateGain(1, attackStageEnd, 'linear')
             this.setState({ attackStageEnd, decayStageEnd })
             this.updateGain(amplifierSustainLevel, decayStageEnd, 'linear')
-
         }
     }
 
@@ -86,6 +89,7 @@ export default class VCA extends React.Component {
             let decayStageEnd = audioContext.currentTime + newRemainingDecayTime
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
+            
             if (decayStageEnd < audioContext.currentTime) {
                 decayStageEnd = audioContext.currentTime
             }
@@ -113,13 +117,35 @@ export default class VCA extends React.Component {
         }
     }
 
+    updateRelease () {
+        if (this.amplifier.gain.value > 0 && this.state.releaseStageEnd) {
+            const { amplifierReleaseTime, audioContext } = this.props
+            
+            const timeSinceSustainStageEnded = audioContext.currentTime - this.state.sustainStageEnd
+            const newRemainingReleaseTime = amplifierReleaseTime - timeSinceSustainStageEnded
+
+            let releaseStageEnd = audioContext.currentTime + newRemainingReleaseTime
+
+            this.cancelScheduledValues()
+            this.updateGain(this.amplifier.gain.value)
+
+            if (releaseStageEnd < audioContext.currentTime) {
+                releaseStageEnd = audioContext.currentTime
+            }
+            
+            this.updateGain(0, releaseStageEnd, 'linear')
+            this.setState({ releaseStageEnd })
+        }
+    }
+
     triggerEnvelope (prevProps) {
         const { 
             audioContext, 
             currentKeys, 
             amplifierAttackTime, 
             amplifierDecayTime,
-            amplifierSustainLevel
+            amplifierSustainLevel,
+            amplifierReleaseTime
         } = this.props
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
@@ -130,7 +156,12 @@ export default class VCA extends React.Component {
         } else if (currentKeys.length > 0 && currentKey !== prevKey) {
             // retrigger envelope on receiving new key press or removing a key with more keys 
             // still engaged
-            this.setState({ attackStageEnd: audioContext.currentTime + amplifierAttackTime, decayStageEnd: audioContext.currentTime + amplifierAttackTime + amplifierDecayTime })
+            this.setState({
+                attackStageEnd: audioContext.currentTime + amplifierAttackTime, 
+                decayStageEnd: audioContext.currentTime + amplifierAttackTime + amplifierDecayTime, 
+                sustainStageEnd: null,
+                releaseStageEnd: null
+            })
             this.cancelScheduledValues()
             this.updateGain(0, audioContext.currentTime)
             this.updateGain(1, amplifierAttackTime + audioContext.currentTime, 'linear')
@@ -140,7 +171,7 @@ export default class VCA extends React.Component {
             this.cancelScheduledValues()
             this.updateGain(this.amplifier.gain.value)
             this.updateGain(0, this.props.amplifierReleaseTime + audioContext.currentTime, 'linear')
-            this.setState({ attackStageEnd: null })
+            this.setState({ attackStageEnd: null, decayStageEnd: null, releaseStageEnd: audioContext.currentTime + amplifierReleaseTime, sustainStageEnd: audioContext.currentTime })
         }
     }
 

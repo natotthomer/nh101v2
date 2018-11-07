@@ -10,8 +10,8 @@ export default class SynthEngine extends Component {
 
         this.state = {
             amplifierAttackTime: 1.0,
-            amplifierDecayTime: 3.0,
-            amplifierSustainLevel: 0.2,
+            amplifierDecayTime: 1.0,
+            amplifierSustainLevel: 0.5,
             amplifierReleaseTime: 0.3,
             controller: 'keyboard',
             octave: 4,
