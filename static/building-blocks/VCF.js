@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { calculateAttackFrequency, calculateSustainFrequency } from '../utils'
+
 export default class VCF extends React.Component {
     constructor (props) {
         super(props)
@@ -17,12 +19,14 @@ export default class VCF extends React.Component {
         this.filter.Q.value = this.props.filterQ
 
         this.updateFrequency = this.updateFrequency.bind(this)
+        this.updateQ = this.updateQ.bind(this)
         this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
         this.triggerEnvelope = this.triggerEnvelope.bind(this)
         this.updateAttack = this.updateAttack.bind(this)
         this.updateDecay = this.updateDecay.bind(this)
         this.updateSustain = this.updateSustain.bind(this)
         this.updateRelease = this.updateRelease.bind(this)
+        this.updateFilterEnvelopeAmount = this.updateFilterEnvelopeAmount.bind(this)
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -41,43 +45,63 @@ export default class VCF extends React.Component {
             this.updateFrequency(this.props.filterCutoffFrequency)
         } else if (this.props.filterQ !== prevProps.filterQ) {
             this.updateQ(this.props.filterQ)
+        } else if (this.props.filterEnvelopeAmount !== prevProps.filterEnvelopeAmount) {
+            this.updateFilterEnvelopeAmount(prevProps)
         }
     }
 
     updateAttack () {
-        const { triggerStartTime, audioContext, filterAttackTime, filterDecayTime, filterSustainLevel } = this.props
+        const { 
+            triggerStartTime, 
+            audioContext, 
+            filterAttackTime, 
+            filterDecayTime, 
+            filterSustainLevel,
+            filterCutoffFrequency,
+            filterEnvelopeAmount
+        } = this.props
 
         if (triggerStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
             const timeSinceTrigger = audioContext.currentTime - triggerStartTime
             const newRemainingAttackTime = filterAttackTime - timeSinceTrigger
+            const attackFrequency = calculateAttackFrequency(filterCutoffFrequency, filterEnvelopeAmount)
+            const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
             
             let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
             let decayStageEnd = attackStageEnd + filterDecayTime
             
-            console.log(this.filter.frequency.value)
             this.cancelScheduledValues()
             this.updateFrequency(this.filter.frequency.value)
 
             if (attackStageEnd < audioContext.currentTime) {
-                console.log('')
                 attackStageEnd = audioContext.currentTime
                 decayStageEnd = audioContext.currentTime + filterDecayTime
             }
-            this.updateFrequency(20000, attackStageEnd, 'linear')
+            
+            this.updateFrequency(attackFrequency, attackStageEnd, 'linear')
             this.setState({ attackStageEnd, decayStageEnd })
-            this.updateFrequency(filterSustainLevel, decayStageEnd, 'linear')
+            this.updateFrequency(sustainFrequency, decayStageEnd, 'linear')
         }
     }
 
     updateDecay () {
-        const { triggerStartTime, audioContext, filterDecayTime, filterSustainLevel } = this.props
+        const { 
+            triggerStartTime, 
+            audioContext, 
+            filterDecayTime, 
+            filterSustainLevel,
+            filterCutoffFrequency,
+            filterEnvelopeAmount
+        } = this.props
+
+        const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
 
         if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
             const decayStageEnd = this.state.attackStageEnd + filterDecayTime
             
             this.filter.frequency.cancelAndHoldAtTime(this.state.attackStageEnd)
             this.filter.frequency.setValueAtTime(this.filter.frequency.value, audioContext.currentTime)
-            this.updateFrequency(filterSustainLevel, decayStageEnd, 'linear')
+            this.updateFrequency(sustainFrequency, decayStageEnd, 'linear')
             this.setState({ decayStageEnd })
         } else if (triggerStartTime && (audioContext.currentTime < this.state.decayStageEnd) && (audioContext.currentTime > this.state.attackStageEnd)) {
             const timeSinceAttackStageEnded = audioContext.currentTime - this.state.attackStageEnd
@@ -91,26 +115,35 @@ export default class VCF extends React.Component {
                 decayStageEnd = audioContext.currentTime
             }
 
-            this.updateFrequency(filterSustainLevel, decayStageEnd, 'linear')
+            this.updateFrequency(sustainFrequency, decayStageEnd, 'linear')
             this.setState({ decayStageEnd })
         }
     }
 
     updateSustain () {
-        const { triggerStartTime, audioContext, filterSustainLevel, filterDecayTime } = this.props
+        const { 
+            triggerStartTime, 
+            audioContext, 
+            filterSustainLevel, 
+            filterDecayTime,
+            filterCutoffFrequency,
+            filterEnvelopeAmount
+        } = this.props
+        const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
+
         if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
             const decayStageEnd = this.state.attackStageEnd + filterDecayTime
             
             this.filter.frequency.cancelAndHoldAtTime(this.state.attackStageEnd)
             this.filter.frequency.setValueAtTime(this.filter.frequency.value, audioContext.currentTime)
-            this.updateFrequency(filterSustainLevel, decayStageEnd, 'linear')
+            this.updateFrequency(sustainFrequency, decayStageEnd, 'linear')
             this.setState({ decayStageEnd })
         } else if (triggerStartTime && audioContext.currentTime < this.state.decayStageEnd) {
             this.filter.frequency.cancelScheduledValues(audioContext.currentTime)
             this.filter.frequency.setValueAtTime(this.filter.frequency.value, audioContext.currentTime)
-            this.updateFrequency(filterSustainLevel, this.state.decayStageEnd, 'linear')
+            this.updateFrequency(sustainFrequency, this.state.decayStageEnd, 'linear')
         } else if (triggerStartTime) {
-            this.updateFrequency(filterSustainLevel)
+            this.updateFrequency(sustainFrequency)
         }
     }
 
@@ -135,6 +168,31 @@ export default class VCF extends React.Component {
         }
     }
 
+    updateFilterEnvelopeAmount (prevProps) {
+        const {
+            triggerStartTime,
+            audioContext,
+            filterAttackTime,
+            filterDecayTime,
+            filterSustainLevel,
+            filterReleaseTime,
+            filterCutoffFrequency,
+            filterEnvelopeAmount
+        } = this.props
+        const attackFrequency = calculateAttackFrequency(filterCutoffFrequency, filterEnvelopeAmount)
+        const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
+        const prevAttackFrequency = calculateAttackFrequency(prevProps.filterCutoffFrequency, prevProps.filterEnvelopeAmount)
+        const prevSustainFrequency = calculateSustainFrequency(prevProps.filterCutoffFrequency, prevProps.filterEnvelopeAmount, prevProps.filterSustainLevel)
+
+        if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
+            const percentDifferenceOfOldAndNewAttackFrequency = (prevAttackFrequency - attackFrequency) / filterCutoffFrequency
+            this.cancelScheduledValues()
+            this.updateFrequency(this.filter.frequency.value)
+
+        }
+        
+    }
+
     triggerEnvelope (prevProps) {
         const { 
             audioContext, 
@@ -142,7 +200,9 @@ export default class VCF extends React.Component {
             filterAttackTime, 
             filterDecayTime,
             filterSustainLevel,
-            filterReleaseTime
+            filterReleaseTime,
+            filterCutoffFrequency,
+            filterEnvelopeAmount
         } = this.props
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
@@ -159,10 +219,16 @@ export default class VCF extends React.Component {
                 sustainStageEnd: null,
                 releaseStageEnd: null
             })
+
+            const attackFrequency = calculateAttackFrequency(filterCutoffFrequency, filterEnvelopeAmount)
+            const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
+            console.log(attackFrequency)
+            console.log(sustainFrequency)
+            
             this.cancelScheduledValues()
-            this.updateFrequency(this.props.filterCutoffFrequency, audioContext.currentTime)
-            this.updateFrequency(20000, filterAttackTime + audioContext.currentTime, 'linear')
-            this.updateFrequency(filterSustainLevel, filterDecayTime + filterAttackTime + audioContext.currentTime, 'linear')
+            this.updateFrequency(filterCutoffFrequency)
+            this.updateFrequency(attackFrequency, filterAttackTime + audioContext.currentTime, 'linear')
+            this.updateFrequency(sustainFrequency, filterDecayTime + filterAttackTime + audioContext.currentTime, 'linear')
         } else if (currentKey !== prevKey && currentKey === undefined) {
             // initiate Release stage
             this.cancelScheduledValues()

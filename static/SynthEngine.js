@@ -15,7 +15,7 @@ export default class SynthEngine extends Component {
             amplifierReleaseTime: 0.3,
             filterAttackTime: 1.0,
             filterDecayTime: 1.0,
-            filterSustainLevel: 4000,
+            filterSustainLevel: 0.5,
             filterReleaseTime: 0.3,
             filterCutoffFrequency: 1000,
             filterQ: 1.0,
@@ -108,7 +108,7 @@ export default class SynthEngine extends Component {
                         <div style={{ display: 'flex', flexDirection: 'column' }}><span>ADSR</span>
                             <label htmlFor="filter-attack-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterAttackTime} onChange={this.handleFilterAttackTimeChange} name="filter-attack-time" />Attack {this.state.filterAttackTime}</label>
                             <label htmlFor="filter-decay-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterDecayTime} onChange={this.handleFilterDecayTimeChange} name="filter-decay-time" />Decay {this.state.filterDecayTime}</label>
-                            <label htmlFor="filter-sustain-level"><input type='range' min={0.000} max={20000.0} step={0.001} value={this.state.filterSustainLevel} onChange={this.handleFilterSustainLevelChange} name="filter-sustain-level" />Sustain {this.state.filterSustainLevel}</label>
+                            <label htmlFor="filter-sustain-level"><input type='range' min={0.001} max={1.0} step={0.001} value={this.state.filterSustainLevel} onChange={this.handleFilterSustainLevelChange} name="filter-sustain-level" />Sustain {this.state.filterSustainLevel}</label>
                             <label htmlFor="filter-release-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterReleaseTime} onChange={this.handleFilterReleaseTimeChange} name="filter-release-time" />Release {this.state.filterReleaseTime}</label>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
