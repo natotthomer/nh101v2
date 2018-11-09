@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import VoiceContainer from './building-blocks/Voice-container'
+import Range from './input/Range'
 
 import { REGISTERED_KEYS } from '../constants/keyboard-constants'
 import { frequencyFromNoteNumber } from '../utils'
@@ -22,12 +23,13 @@ export default class SynthEngine extends Component {
             filterQ: 1.0,
             filterEnvelopeAmount: 1.0,
             controller: 'keyboard',
-            octave: 3,
+            oscillatorOctave: 3,
             currentKey: null,
             triggerStartTime: null,
             retrigger: true
         }
 
+        this.handleOscillatorOctaveChange = this.handleOscillatorOctaveChange.bind(this)
         this.handleAmplifierAttackTimeChange = this.handleAmplifierAttackTimeChange.bind(this)
         this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
         this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
@@ -48,6 +50,10 @@ export default class SynthEngine extends Component {
         } else if (this.props.keyboard.currentKeys.length === 0 && this.state.triggerStartTime) {
             this.setState({ triggerStartTime: null })
         }
+    }
+
+    handleOscillatorOctaveChange (e) {
+        this.setState({ oscillatorOctave: parseInt(e.target.value) })
     }
 
     handleAmplifierAttackTimeChange (e) {
@@ -101,39 +107,111 @@ export default class SynthEngine extends Component {
     render () {
         return (
             <div style={{ height: '100%', width: '100%' }}>
-                <VoiceContainer 
-                    ref={ref => (this.voice = ref)} 
+                <VoiceContainer
                     {...this.state} 
                     audioContext={this.props.audioContext} />
-                <div id="filter-sliders">
-                    <div>VCF</div>
-                    <div style={{ display: 'flex' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}><span>ADSR</span>
-                            <label htmlFor="filter-attack-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterAttackTime} onChange={this.handleFilterAttackTimeChange} name="filter-attack-time" />Attack {this.state.filterAttackTime}</label>
-                            <label htmlFor="filter-decay-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterDecayTime} onChange={this.handleFilterDecayTimeChange} name="filter-decay-time" />Decay {this.state.filterDecayTime}</label>
-                            <label htmlFor="filter-sustain-level"><input type='range' min={0.001} max={1.0} step={0.001} value={this.state.filterSustainLevel} onChange={this.handleFilterSustainLevelChange} name="filter-sustain-level" />Sustain {this.state.filterSustainLevel}</label>
-                            <label htmlFor="filter-release-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.filterReleaseTime} onChange={this.handleFilterReleaseTimeChange} name="filter-release-time" />Release {this.state.filterReleaseTime}</label>
+                <div className="main-controls">
+                    <div className="module" id="oscillator-controls">
+                        <div className="module-title">VCO</div>
+                        <div className="module-controls">
+                            <div className="module-controls-column">
+                                <Range title="Octave"
+                                    min={1}
+                                    max={7}
+                                    step={1}
+                                    value={this.state.oscillatorOctave}
+                                    handleChange={this.handleOscillatorOctaveChange} />
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <label htmlFor="filter-cutoff-frequency"><input type='range' min={0.001} max={20000.0} step={0.001} value={this.state.filterCutoffFrequency} onChange={this.handleFilterCutoffFrequencyChange} name="filter-cutoff-frequency" />Cutoff {this.state.filterCutoffFrequency}</label>
-                            <label htmlFor="filter-q"><input type='range' min={0.001} max={75} step={0.001} value={this.state.filterQ} onChange={this.handleFilterQChange} name="filter-q" />Resonance {this.state.filterQ}</label>
-                            <label htmlFor="filter-envelope-amount"><input type='range' min={0.0} max={1} step={0.001} value={this.state.filterEnvelopeAmount} onChange={this.handleFilterEnvelopeAmountChange} name="filter-envelope-amount" />Envelope Amount {this.state.filterEnvelopeAmount}</label>
+                    </div>
+
+                    <div className="module" id="filter-controls">
+                        <div className="module-title">VCF</div>
+                        <div className="module-controls">
+                            <div className="module-controls-column">
+                                <Range title="Attack"
+                                    min={0.001}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.filterAttackTime}
+                                    handleChange={this.handleFilterAttackTimeChange} />
+                                <Range title="Decay"
+                                    min={0.001}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.filterDecayTime}
+                                    handleChange={this.handleFilterDecayTimeChange} />
+                                <Range title="Sustain"
+                                    min={0.001}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.filterSustainLevel}
+                                    handleChange={this.handleFilterSustainLevelChange} />
+                                <Range title="Release"
+                                    min={0.001}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.filterReleaseTime}
+                                    handleChange={this.handleFilterReleaseTimeChange} />
+                            </div>
+                            <div className="module-controls-column">
+                                <Range title="Cutoff"
+                                    min={0.001}
+                                    max={20000}
+                                    step={0.001}
+                                    value={this.state.filterCutoffFrequency}
+                                    handleChange={this.handleFilterCutoffFrequencyChange} />
+                                <Range title="Resonance"
+                                    min={0.001}
+                                    max={75}
+                                    step={0.001}
+                                    value={this.state.filterQ}
+                                    handleChange={this.handleFilterQChange} />
+                                <Range title="Envelope Amount"
+                                    min={0.0}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.filterEnvelopeAmount}
+                                    handleChange={this.handleFilterEnvelopeAmountChange} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="module" id="amplifier-controls">
+                        <div className="module-title">VCA</div>
+                        <div className="module-controls">
+                            <div className="module-controls-column">
+                                <Range title="Attack"
+                                    min={0.001}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.amplifierAttackTime}
+                                    handleChange={this.handleAmplifierAttackTimeChange} />
+                                <Range title="Decay"
+                                    min={0.001}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.amplifierDecayTime}
+                                    handleChange={this.handleAmplifierDecayTimeChange} />
+                                <Range title="Sustain"
+                                    min={0.001}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.amplifierSustainLevel}
+                                    handleChange={this.handleAmplifierSustainLevelChange} />
+                                <Range title="Release"
+                                    min={0.000}
+                                    max={10.0}
+                                    step={0.001}
+                                    value={this.state.amplifierReleaseTime}
+                                    handleChange={this.handleAmplifierReleaseTimeChange} />
+                            </div>
+                            <div className="module-controls-column">
+                                <input type='button' name="retrigger-mode" onClick={this.handleRetriggerChange} value={`Retrigger ${this.state.retrigger ? 'on' : 'off'}`} />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div id="amplifier-sliders">
-                    <div>VCA</div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}><span>ADSR</span>
-                        <label htmlFor="amplifier-attack-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierAttackTime} onChange={this.handleAmplifierAttackTimeChange} name="amplifier-attack-time" />Attack {this.state.amplifierAttackTime}</label>
-                        <label htmlFor="amplifier-decay-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierDecayTime} onChange={this.handleAmplifierDecayTimeChange} name="amplifier-decay-time" />Decay {this.state.amplifierDecayTime}</label>
-                        <label htmlFor="amplifier-sustain-level"><input type='range' min={0.000} max={1.0} step={0.001} value={this.state.amplifierSustainLevel} onChange={this.handleAmplifierSustainLevelChange} name="amplifier-sustain-level" />Sustain {this.state.amplifierSustainLevel}</label>
-                        <label htmlFor="amplifier-release-time"><input type='range' min={0.001} max={10.0} step={0.001} value={this.state.amplifierReleaseTime} onChange={this.handleAmplifierReleaseTimeChange} name="amplifier-release-time" />Release {this.state.amplifierReleaseTime}</label>
-                    </div>
-                </div>
-                <input type='button' name="retrigger-mode" onClick={this.handleRetriggerChange} value={`Retrigger ${this.state.retrigger ? 'on' : 'off'}`} />
-                
                 <div>Current Controller: {this.state.controller}</div>
-                <div>Current Octave: {this.state.octave}</div>
             </div>
         )
     }

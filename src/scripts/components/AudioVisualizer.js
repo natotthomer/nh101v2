@@ -38,6 +38,6 @@ export default class AudioVisualizer extends React.Component {
     }
 
     render () {
-        return <canvas width="300" height="300" ref={ref => (this.canvas = ref)} />;
+        return <canvas width="300" height="100" ref={ref => (this.canvas = ref)} />;
     }
 }
