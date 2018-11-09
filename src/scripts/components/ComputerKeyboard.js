@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { REGISTERED_KEYS } from './constants/keyboard-constants'
+import { REGISTERED_KEYS } from '../constants/keyboard-constants'
 
 export default class ComputerKeyboard extends Component {
 

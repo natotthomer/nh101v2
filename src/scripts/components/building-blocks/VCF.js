@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { calculateAttackFrequency, calculateSustainFrequency } from '../utils'
+import { calculateAttackFrequency, calculateSustainFrequency } from '../../utils'
 
 export default class VCF extends React.Component {
     constructor (props) {

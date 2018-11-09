@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import { buildCanvas } from '../synth-charts'
 import VCO from './VCO'
 import VCA from './VCA'
 import VCF from './VCF'

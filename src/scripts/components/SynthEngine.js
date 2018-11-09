@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 
 import VoiceContainer from './building-blocks/Voice-container'
 
-import { REGISTERED_KEYS } from './constants/keyboard-constants'
-import { frequencyFromNoteNumber } from './utils'
+import { REGISTERED_KEYS } from '../constants/keyboard-constants'
+import { frequencyFromNoteNumber } from '../utils'
 
 export default class SynthEngine extends Component {
     constructor (props) {
@@ -22,7 +22,7 @@ export default class SynthEngine extends Component {
             filterQ: 1.0,
             filterEnvelopeAmount: 1.0,
             controller: 'keyboard',
-            octave: 2,
+            octave: 3,
             currentKey: null,
             triggerStartTime: null,
             retrigger: true

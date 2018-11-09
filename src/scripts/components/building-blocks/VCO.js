@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { REGISTERED_KEYS } from '../constants/keyboard-constants'
-import { frequencyFromNoteNumber } from '../utils'
+import { REGISTERED_KEYS } from '../../constants/keyboard-constants'
+import { frequencyFromNoteNumber } from '../../utils'
 
 
 export default class VCO extends React.Component {
@@ -10,7 +10,7 @@ export default class VCO extends React.Component {
 
         this.oscillator = this.props.audioContext.createOscillator()
 
-        this.oscillator.type = 'triangle'
+        this.oscillator.type = 'sawtooth'
         this.oscillator.start()
     }
 

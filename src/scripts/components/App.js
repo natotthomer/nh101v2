@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import audioContext from './audio-context'
+import audioContext from '../audio-context'
 import ComputerKeyboardContainer from './ComputerKeyboard-container'
 import SynthEngineContainer from './SynthEngine-container'
 import Head from './Head'
