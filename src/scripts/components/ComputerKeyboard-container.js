@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import ComputerKeyboard from './ComputerKeyboard'
-import { keyDown, keyUp } from './actions/keyboard-actions'
+import { keyDown, keyUp } from '../actions/keyboard-actions'
 
 
 const mapStateToProps = ({ keyboard }) => ({

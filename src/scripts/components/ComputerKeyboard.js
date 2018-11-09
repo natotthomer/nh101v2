@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { REGISTERED_KEYS } from './constants/keyboard-constants'
+import { REGISTERED_KEYS } from '../constants/keyboard-constants'
 
 export default class ComputerKeyboard extends Component {
 
@@ -33,14 +33,6 @@ export default class ComputerKeyboard extends Component {
     }
     
     render () {
-        let keys = this.props.keyboard.currentKeys.map((key, idx) => {
-            return (
-                <div key={idx}>{key}</div>
-            )
-        })
-
-        return(
-            <div>Keys: {keys}</div>
-        )
+        return null
     }
 }

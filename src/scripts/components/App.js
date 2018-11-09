@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
 
-import audioContext from './audio-context'
+import audioContext from '../audio-context'
 import ComputerKeyboardContainer from './ComputerKeyboard-container'
 import SynthEngineContainer from './SynthEngine-container'
+import Head from './Head'
 
 export default class App extends Component {
     render () {
         return (
-            <div>
+            <React.Fragment>
+                <Head />
                 <SynthEngineContainer audioContext={audioContext} />
                 <ComputerKeyboardContainer />
-            </div>
+            </React.Fragment>
         )
     }
 }
