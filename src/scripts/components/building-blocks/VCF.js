@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { calculateAttackFrequency, calculateSustainFrequency } from '../utils'
+import { calculateAttackFrequency, calculateSustainFrequency } from '../../utils'
 
 export default class VCF extends React.Component {
     constructor (props) {
@@ -185,10 +185,19 @@ export default class VCF extends React.Component {
         const prevSustainFrequency = calculateSustainFrequency(prevProps.filterCutoffFrequency, prevProps.filterEnvelopeAmount, prevProps.filterSustainLevel)
 
         if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
-            const percentDifferenceOfOldAndNewAttackFrequency = (prevAttackFrequency - attackFrequency) / filterCutoffFrequency
+            const newAttackFrequencyPercentOfOldAttackFrequency = (attackFrequency - filterCutoffFrequency) / (prevAttackFrequency - filterCutoffFrequency)
+            const newCurrentFrequency = (this.filter.frequency.value * newAttackFrequencyPercentOfOldAttackFrequency)
+            
             this.cancelScheduledValues()
-            this.updateFrequency(this.filter.frequency.value)
+            this.updateFrequency(newCurrentFrequency)
+            this.updateFrequency(attackFrequency, this.state.attackStageEnd, 'linear')
+        } else if (triggerStartTime && audioContext.currentTime < this.state.decayStageEnd) {
+            const newDecayFrequencyPercentOfOldDecayFrequency = (sustainFrequency - filterCutoffFrequency) / (prevDecayFrequency - filterCutoffFrequency)
+            const newCurrentFrequency = (this.filter.frequency.value * newDecayFrequencyPercentOfOldDecayFrequency)
 
+            this.cancelScheduledValues()
+            this.updateFrequency(newCurrentFrequency)
+            this.updateFrequency(sustainFrequency, this.state.decayStageEnd, 'linear')
         }
         
     }

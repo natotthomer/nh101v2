@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 
-import AppContainer from './App-container'
+import AppContainer from './components/App-container'
 import Store from './store'
+
+import '../styles/index.scss'
 
 const initializeApp = () => {
     ReactDOM.render(
