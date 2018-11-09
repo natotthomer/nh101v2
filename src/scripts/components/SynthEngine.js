@@ -11,10 +11,10 @@ export default class SynthEngine extends Component {
         super(props)
 
         this.state = {
-            amplifierAttackTime: 1.0,
-            amplifierDecayTime: 1.0,
-            amplifierSustainLevel: 0.5,
-            amplifierReleaseTime: 0.3,
+            oscillatorOne: {
+                oscillatorOctave: 3,
+                oscillatorDetune: 0,
+            },
             filterAttackTime: 1.0,
             filterDecayTime: 1.0,
             filterSustainLevel: 0.5,
@@ -22,14 +22,18 @@ export default class SynthEngine extends Component {
             filterCutoffFrequency: 1000,
             filterQ: 1.0,
             filterEnvelopeAmount: 1.0,
+            amplifierAttackTime: 1.0,
+            amplifierDecayTime: 1.0,
+            amplifierSustainLevel: 0.5,
+            amplifierReleaseTime: 0.3,
             controller: 'keyboard',
-            oscillatorOctave: 3,
             currentKey: null,
             triggerStartTime: null,
             retrigger: true
         }
 
         this.handleOscillatorOctaveChange = this.handleOscillatorOctaveChange.bind(this)
+        this.handleOscillatorDetuneChange = this.handleOscillatorDetuneChange.bind(this)
         this.handleAmplifierAttackTimeChange = this.handleAmplifierAttackTimeChange.bind(this)
         this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
         this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
@@ -53,7 +57,15 @@ export default class SynthEngine extends Component {
     }
 
     handleOscillatorOctaveChange (e) {
-        this.setState({ oscillatorOctave: parseInt(e.target.value) })
+        const oscillatorOne = {...this.state.oscillatorOne}
+        oscillatorOne.oscillatorOctave = parseInt(e.target.value)
+        this.setState({ oscillatorOne })
+    }
+
+    handleOscillatorDetuneChange (e) {
+        const oscillatorOne = {...this.state.oscillatorOne}
+        oscillatorOne.oscillatorDetune = parseFloat(e.target.value)
+        this.setState({ oscillatorOne })
     }
 
     handleAmplifierAttackTimeChange (e) {
@@ -119,8 +131,14 @@ export default class SynthEngine extends Component {
                                     min={1}
                                     max={7}
                                     step={1}
-                                    value={this.state.oscillatorOctave}
+                                    value={this.state.oscillatorOne.oscillatorOctave}
                                     handleChange={this.handleOscillatorOctaveChange} />
+                                <Range title="Detune"
+                                    min={-1.0}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.oscillatorOne.oscillatorDetune}
+                                    handleChange={this.handleOscillatorDetuneChange} />
                             </div>
                         </div>
                     </div>

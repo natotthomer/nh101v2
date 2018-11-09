@@ -13,14 +13,14 @@ export default class Voice extends Component {
             _isMounted: false
         }
 
-        this.vco = null
+        this.vcoOne = null
         this.vcoMixer = props.audioContext.createGain()
         this.vcf = null
         this.vca = null
     }
     
     componentDidMount () {
-        this.vco.oscillator.connect(this.vcoMixer)
+        this.vcoOne.oscillator.connect(this.vcoMixer)
         this.vcoMixer.connect(this.vcf.filter)
         this.vcf.filter.connect(this.vca.amplifier)
         this.vca.amplifier.connect(this.props.audioContext.destination)
@@ -33,8 +33,10 @@ export default class Voice extends Component {
         return (
             <React.Fragment>
                 <React.Fragment>
-                    <VCO ref={vco => (this.vco = vco)}
-                        {...this.props} />
+                    <VCO ref={vcoOne => (this.vcoOne = vcoOne)}
+                        {...this.props.oscillatorOne} 
+                        currentKeys={this.props.currentKeys}
+                        audioContext={this.props.audioContext} />
                     <AudioAnalyser 
                         audioContext={this.props.audioContext}
                         input={this.vcoMixer} 
