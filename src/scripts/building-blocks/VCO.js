@@ -10,7 +10,7 @@ export default class VCO extends React.Component {
 
         this.oscillator = this.props.audioContext.createOscillator()
 
-        this.oscillator.type = 'sawtooth'
+        this.oscillator.type = 'triangle'
         this.oscillator.start()
     }
 

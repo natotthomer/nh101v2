@@ -33,14 +33,6 @@ export default class ComputerKeyboard extends Component {
     }
     
     render () {
-        let keys = this.props.keyboard.currentKeys.map((key, idx) => {
-            return (
-                <div key={idx}>{key}</div>
-            )
-        })
-
-        return(
-            <div>Keys: {keys}</div>
-        )
+        return null
     }
 }

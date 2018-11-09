@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 
-import { REGISTERED_KEYS } from './constants/keyboard-constants'
 import VoiceContainer from './building-blocks/Voice-container'
+
+import { REGISTERED_KEYS } from './constants/keyboard-constants'
 import { frequencyFromNoteNumber } from './utils'
 
 export default class SynthEngine extends Component {
@@ -21,7 +22,7 @@ export default class SynthEngine extends Component {
             filterQ: 1.0,
             filterEnvelopeAmount: 1.0,
             controller: 'keyboard',
-            octave: 3,
+            octave: 2,
             currentKey: null,
             triggerStartTime: null,
             retrigger: true
@@ -100,8 +101,10 @@ export default class SynthEngine extends Component {
     render () {
         return (
             <div style={{ height: '100%', width: '100%' }}>
-                <div id="chartContainer" style={{ height: "300px", width: "100%" }}></div>
-
+                <VoiceContainer 
+                    ref={ref => (this.voice = ref)} 
+                    {...this.state} 
+                    audioContext={this.props.audioContext} />
                 <div id="filter-sliders">
                     <div>VCF</div>
                     <div style={{ display: 'flex' }}>
@@ -131,10 +134,6 @@ export default class SynthEngine extends Component {
                 
                 <div>Current Controller: {this.state.controller}</div>
                 <div>Current Octave: {this.state.octave}</div>
-                <VoiceContainer 
-                    ref={ref => (this.voice = ref)} 
-                    {...this.state} 
-                    audioContext={this.props.audioContext} />
             </div>
         )
     }

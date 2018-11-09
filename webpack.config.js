@@ -1,13 +1,14 @@
 var path = require('path');
 var webpack = require('webpack');
 var BundleTracker = require('webpack-bundle-tracker');
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
   context: __dirname,
-  entry: './static/index.js',
+  entry: './src/scripts/index.js',
   output: {
       path: path.resolve('./static/webpack_bundles/'),
-      filename: "[name]-[hash].js"
+      filename: "[name].scripts.js"
   },
   module: {
     rules: [
@@ -15,6 +16,10 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader']
+      },
+      {
+        test: /\.scss$|\.css$/,
+        loader: ExtractTextPlugin.extract('css-loader!sass-loader')
       }
     ]
   },
@@ -23,6 +28,10 @@ module.exports = {
   },
   mode: 'development',
   plugins: [
-    new BundleTracker({filename: './webpack-stats.json'})
+    new BundleTracker({filename: './webpack-stats.json'}),
+    new ExtractTextPlugin({
+      filename: '[name].styles.css',
+      allChunks: true
+    }),
   ]
 }

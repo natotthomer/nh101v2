@@ -5,6 +5,8 @@ import { Provider } from 'react-redux'
 import AppContainer from './App-container'
 import Store from './store'
 
+import '../styles/index.scss'
+
 const initializeApp = () => {
     ReactDOM.render(
         <Provider store={Store()}>
