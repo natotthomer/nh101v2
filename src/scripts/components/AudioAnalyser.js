@@ -42,6 +42,6 @@ export default class AudioAnalyser extends React.Component {
     }
     
     render() {
-        return <AudioVisualizer audioData={this.state.audioData} />;
+        return <AudioVisualizer audioData={this.state.audioData} analyser={this.analyser} />;
     }
 }

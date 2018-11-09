@@ -231,8 +231,6 @@ export default class VCF extends React.Component {
 
             const attackFrequency = calculateAttackFrequency(filterCutoffFrequency, filterEnvelopeAmount)
             const sustainFrequency = calculateSustainFrequency(filterCutoffFrequency, filterEnvelopeAmount, filterSustainLevel)
-            console.log(attackFrequency)
-            console.log(sustainFrequency)
             
             this.cancelScheduledValues()
             this.updateFrequency(filterCutoffFrequency)

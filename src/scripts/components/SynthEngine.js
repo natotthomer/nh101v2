@@ -24,7 +24,7 @@ export default class SynthEngine extends Component {
                 oscillatorOctave: 4,
                 oscillatorDetune: 0,
                 oscillatorWaveform: 'sawtooth',
-                oscillatorGain: 0.5
+                oscillatorGain: 0.0
             },
             filterAttackTime: 1.0,
             filterDecayTime: 1.0,

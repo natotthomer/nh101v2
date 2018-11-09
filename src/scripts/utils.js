@@ -5,6 +5,7 @@ const frequencyFromNoteNumber = noteNumber => {
 export const calculateOscillatorFrequency = (noteNumber, detuneAmount) => {
     const baseFrequency = frequencyFromNoteNumber(noteNumber)
     let adjustedFrequency = baseFrequency
+    
     if (detuneAmount > 0) {
         const frequencyOfNextNoteUp = frequencyFromNoteNumber(noteNumber + 1)
         adjustedFrequency += (frequencyOfNextNoteUp - adjustedFrequency) * detuneAmount
@@ -12,8 +13,7 @@ export const calculateOscillatorFrequency = (noteNumber, detuneAmount) => {
         const frequencyOfNextNoteDown = frequencyFromNoteNumber(noteNumber - 1)
         adjustedFrequency -= (adjustedFrequency - frequencyOfNextNoteDown) * detuneAmount
     }
-    console.log(baseFrequency)
-    console.log(adjustedFrequency)
+
     return adjustedFrequency
 }
 
