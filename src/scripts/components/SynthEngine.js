@@ -2,9 +2,12 @@ import React, { Component } from 'react'
 
 import VoiceContainer from './building-blocks/Voice-container'
 import Range from './input/Range'
+import Dropdown from './input/Dropdown'
 
 import { REGISTERED_KEYS } from '../constants/keyboard-constants'
 import { frequencyFromNoteNumber } from '../utils'
+
+const WAVEFORMS = [ 'sawtooth', 'triangle', 'square', 'sine' ]
 
 export default class SynthEngine extends Component {
     constructor (props) {
@@ -14,6 +17,14 @@ export default class SynthEngine extends Component {
             oscillatorOne: {
                 oscillatorOctave: 3,
                 oscillatorDetune: 0,
+                oscillatorWaveform: 'sawtooth',
+                oscillatorGain: 0.5
+            },
+            oscillatorTwo: {
+                oscillatorOctave: 4,
+                oscillatorDetune: 0,
+                oscillatorWaveform: 'sawtooth',
+                oscillatorGain: 0.5
             },
             filterAttackTime: 1.0,
             filterDecayTime: 1.0,
@@ -32,8 +43,14 @@ export default class SynthEngine extends Component {
             retrigger: true
         }
 
-        this.handleOscillatorOctaveChange = this.handleOscillatorOctaveChange.bind(this)
-        this.handleOscillatorDetuneChange = this.handleOscillatorDetuneChange.bind(this)
+        this.handleOscillatorOneOctaveChange = this.handleOscillatorOneOctaveChange.bind(this)
+        this.handleOscillatorOneDetuneChange = this.handleOscillatorOneDetuneChange.bind(this)
+        this.handleOscillatorOneWaveformChange = this.handleOscillatorOneWaveformChange.bind(this)
+        this.handleOscillatorOneGainChange = this.handleOscillatorOneGainChange.bind(this)
+        this.handleOscillatorTwoOctaveChange = this.handleOscillatorTwoOctaveChange.bind(this)
+        this.handleOscillatorTwoDetuneChange = this.handleOscillatorTwoDetuneChange.bind(this)
+        this.handleOscillatorTwoWaveformChange = this.handleOscillatorTwoWaveformChange.bind(this)
+        this.handleOscillatorTwoGainChange = this.handleOscillatorTwoGainChange.bind(this)
         this.handleAmplifierAttackTimeChange = this.handleAmplifierAttackTimeChange.bind(this)
         this.handleAmplifierDecayTimeChange = this.handleAmplifierDecayTimeChange.bind(this)
         this.handleAmplifierSustainLevelChange = this.handleAmplifierSustainLevelChange.bind(this)
@@ -56,16 +73,52 @@ export default class SynthEngine extends Component {
         }
     }
 
-    handleOscillatorOctaveChange (e) {
+    handleOscillatorOneOctaveChange (e) {
         const oscillatorOne = {...this.state.oscillatorOne}
         oscillatorOne.oscillatorOctave = parseInt(e.target.value)
         this.setState({ oscillatorOne })
     }
 
-    handleOscillatorDetuneChange (e) {
+    handleOscillatorOneDetuneChange (e) {
         const oscillatorOne = {...this.state.oscillatorOne}
         oscillatorOne.oscillatorDetune = parseFloat(e.target.value)
         this.setState({ oscillatorOne })
+    }
+
+    handleOscillatorOneWaveformChange (e) {
+        const oscillatorOne = {...this.state.oscillatorOne}
+        oscillatorOne.oscillatorWaveform = e.target.value
+        this.setState({ oscillatorOne })
+    }
+
+    handleOscillatorOneGainChange (e) {
+        const oscillatorOne = {...this.state.oscillatorOne}
+        oscillatorOne.oscillatorGain = parseFloat(e.target.value)
+        this.setState({ oscillatorOne })
+    }
+
+    handleOscillatorTwoOctaveChange (e) {
+        const oscillatorTwo = {...this.state.oscillatorTwo}
+        oscillatorTwo.oscillatorOctave = parseInt(e.target.value)
+        this.setState({ oscillatorTwo })
+    }
+
+    handleOscillatorTwoDetuneChange (e) {
+        const oscillatorTwo = {...this.state.oscillatorTwo}
+        oscillatorTwo.oscillatorDetune = parseFloat(e.target.value)
+        this.setState({ oscillatorTwo })
+    }
+
+    handleOscillatorTwoWaveformChange (e) {
+        const oscillatorTwo = {...this.state.oscillatorTwo}
+        oscillatorTwo.oscillatorWaveform = e.target.value
+        this.setState({ oscillatorTwo })
+    }
+
+    handleOscillatorTwoGainChange (e) {
+        const oscillatorTwo = {...this.state.oscillatorTwo}
+        oscillatorTwo.oscillatorGain = parseFloat(e.target.value)
+        this.setState({ oscillatorTwo })
     }
 
     handleAmplifierAttackTimeChange (e) {
@@ -132,13 +185,47 @@ export default class SynthEngine extends Component {
                                     max={7}
                                     step={1}
                                     value={this.state.oscillatorOne.oscillatorOctave}
-                                    handleChange={this.handleOscillatorOctaveChange} />
+                                    handleChange={this.handleOscillatorOneOctaveChange} />
                                 <Range title="Detune"
                                     min={-1.0}
                                     max={1.0}
                                     step={0.001}
                                     value={this.state.oscillatorOne.oscillatorDetune}
-                                    handleChange={this.handleOscillatorDetuneChange} />
+                                    handleChange={this.handleOscillatorOneDetuneChange} />
+                                <Dropdown title="Waveform"
+                                    options={WAVEFORMS}
+                                    value={this.state.oscillatorOne.oscillatorWaveform}
+                                    handleChange={this.handleOscillatorOneWaveformChange} />
+                                <Range title="Gain"
+                                    min={0.0}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.oscillatorOne.oscillatorGain}
+                                    handleChange={this.handleOscillatorOneGainChange} />
+                            </div>
+                            <div className="module-controls-column">
+                                <Range title="Octave"
+                                    min={1}
+                                    max={7}
+                                    step={1}
+                                    value={this.state.oscillatorTwo.oscillatorOctave}
+                                    handleChange={this.handleOscillatorTwoOctaveChange} />
+                                <Range title="Detune"
+                                    min={-1.0}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.oscillatorTwo.oscillatorDetune}
+                                    handleChange={this.handleOscillatorTwoDetuneChange} />
+                                <Dropdown title="Waveform"
+                                    options={WAVEFORMS}
+                                    value={this.state.oscillatorTwo.oscillatorWaveform}
+                                    handleChange={this.handleOscillatorTwoWaveformChange} />
+                                <Range title="Gain"
+                                    min={0.0}
+                                    max={1.0}
+                                    step={0.001}
+                                    value={this.state.oscillatorTwo.oscillatorGain}
+                                    handleChange={this.handleOscillatorTwoGainChange} />
                             </div>
                         </div>
                     </div>

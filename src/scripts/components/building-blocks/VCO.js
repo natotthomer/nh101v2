@@ -10,7 +10,7 @@ export default class VCO extends React.Component {
 
         this.oscillator = this.props.audioContext.createOscillator()
 
-        this.oscillator.type = 'sawtooth'
+        this.oscillator.type = this.props.oscillatorWaveform
         this.oscillator.start()
     }
 
@@ -22,6 +22,7 @@ export default class VCO extends React.Component {
             const newValue = calculateOscillatorFrequency(noteNumber, this.props.oscillatorDetune)
             this.oscillator.frequency.setValueAtTime(newValue, this.props.audioContext.currentTime)
         }
+        this.oscillator.type = this.props.oscillatorWaveform
     }
 
     render () {
