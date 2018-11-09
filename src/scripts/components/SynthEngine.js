@@ -317,6 +317,7 @@ export default class SynthEngine extends Component {
                     </div>
                 </div>
                 <div>Current Controller: {this.state.controller}</div>
+                <div>Use AWSEDFTGYHUJKOLP; keys to play!</div>
             </div>
         )
     }
