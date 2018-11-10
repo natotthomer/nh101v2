@@ -32,8 +32,8 @@ export default class Voice extends Component {
         this.vcoOneGain.connect(this.vcoMixer)
         this.vcoTwoGain.connect(this.vcoMixer)
 
-        this.vcoMixer.connect(this.vcf.filter)
-        this.vcf.filter.connect(this.vca.amplifier)
+        this.vcoMixer.connect(this.vcf.output)
+        this.vcf.output.connect(this.vca.amplifier)
         this.vca.amplifier.connect(this.props.audioContext.destination)
         this.setState({ _isMounted: true })
     }

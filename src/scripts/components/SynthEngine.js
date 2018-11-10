@@ -261,7 +261,7 @@ export default class SynthEngine extends Component {
                             </div>
                             <div className="module-controls-column">
                                 <Range title="Cutoff"
-                                    min={0.001}
+                                    min={20}
                                     max={20000}
                                     step={0.001}
                                     value={this.state.filterCutoffFrequency}
