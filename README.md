@@ -22,6 +22,7 @@ Features:
     -touch events
 -more rigorous module and sub-module styling
 -standardize addition of new modules (VCOs, filters, etc.)
+-variable envelope response times (fast, medium, slow)
 
 Bugs:
 -Fix filter env
