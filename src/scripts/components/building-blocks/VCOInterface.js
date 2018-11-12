@@ -28,7 +28,7 @@ const VCOInterface = props => {
             min: 0.0,
             max: 1.0,
             step: 0.001,
-            valueType: 'integer',
+            valueType: 'float',
             parameter: 'oscillatorGain'
         },
         waveform: {

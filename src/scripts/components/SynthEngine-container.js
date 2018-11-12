@@ -2,8 +2,15 @@ import { connect } from 'react-redux'
 
 import SynthEngine from './SynthEngine'
 
-const mapStateToProps = ({ keyboard }) => ({
-    keyboard
+import { updateGateStartTime } from '../actions/synth-actions'
+
+const mapStateToProps = ({ keyboard, synth }) => ({
+    ...keyboard,
+    ...synth
 })
 
-export default connect(mapStateToProps)(SynthEngine)
+const mapDispatchToProps = dispatch => ({
+    updateGateStartTime: data => dispatch(updateGateStartTime(data))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SynthEngine)

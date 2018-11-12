@@ -8,18 +8,22 @@ export default class Dropdown extends React.Component {
     }
 
     handleChange (e) {
-        const data = {}
+        const data = {
+            parameter: this.props.parameter
+        }
+
+        isNaN(this.props.id) ? data.id = null : data.id = this.props.id
         switch (this.props.valueType) {
             case 'float': {
-                data[parameter] = parseFloat(e.target.value)
+                data.value = parseFloat(e.target.value)
                 break
             }
             case 'integer': {
-                data[parameter] = parseInt(e.target.value)
+                data.value = parseInt(e.target.value)
                 break
             }
             case 'string': {
-                data[parameter] = e.target.value
+                data.value = e.target.value
             }
         }
         
@@ -36,7 +40,7 @@ export default class Dropdown extends React.Component {
                 <div className='input-dropdown-title'>
                     {this.props.title}
                 </div>
-                <select onChange={this.props.handleChange} value={this.props.value}>
+                <select onChange={this.handleChange} value={this.props.value}>
                     {options}
                 </select>
             </div>

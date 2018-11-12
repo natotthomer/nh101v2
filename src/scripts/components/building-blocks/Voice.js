@@ -39,12 +39,12 @@ export default class Voice extends Component {
     }
     
     componentDidUpdate (prevProps, prevState) {
-        // if (this.props.oscillatorOne.oscillatorGain !== prevProps.oscillatorOne.oscillatorGain) {
-        //     this.vcoOneGain.gain.setValueAtTime(this.props.oscillatorOne.oscillatorGain, this.props.audioContext.currentTime)
-        // } else if (this.props.oscillatorTwo.oscillatorGain !== prevProps.oscillatorTwo.oscillatorGain) {
-        //     this.vcoTwoGain.gain.setValueAtTime(this.props.oscillatorTwo.oscillatorGain, this.props.audioContext.currentTime)
+        if (this.props.synth.vcos[0].oscillatorGain !== prevProps.synth.vcos[0].oscillatorGain) {
+            this.vcoOneGain.gain.setValueAtTime(this.props.synth.vcos[0].oscillatorGain, this.props.audioContext.currentTime)
+        } else if (this.props.synth.vcos[1].oscillatorGain !== prevProps.synth.vcos[1].oscillatorGain) {
+            this.vcoTwoGain.gain.setValueAtTime(this.props.synth.vcos[1].oscillatorGain, this.props.audioContext.currentTime)
 
-        // }
+        }
     }
 
     render () {

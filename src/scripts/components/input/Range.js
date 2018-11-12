@@ -31,8 +31,6 @@ export default class Range extends React.Component {
     }
 
     render () {
-        console.log(this.props)
-
         return (
             <div className='input-range'>
                 <div className='input-range-title'>

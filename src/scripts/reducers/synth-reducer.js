@@ -39,22 +39,11 @@ const _nulLSynth = {
     retrigger: true
 }
 
-// const data = {
-//     parameter: 'detune',
-//     vcoID: 1,
-//     value: 0.0041
-// }
-
-// this.props.updateVCO()
-
 const SynthReducer = (state = _nulLSynth, action) => {
     switch (action.type) {
         case UPDATE_VCO: {
-            // console.log(action)
-            
             const vcos = [...state.vcos]
-            const vco = vcos[action.data.id]
-
+            const vco = Object.assign({}, vcos[action.data.id])
             vco[action.data.parameter] = action.data.value
             vcos[action.data.id] = vco
 
