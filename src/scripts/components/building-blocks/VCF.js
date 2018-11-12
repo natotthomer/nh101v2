@@ -52,7 +52,7 @@ export default class VCF extends React.Component {
     }
 
     componentDidUpdate (prevProps, prevState) {
-        this.triggerEnvelope(prevProps)
+        // this.triggerEnvelope(prevProps)
         // These are checking whether the values are changing while the envelope is in 
         // process, and therefore whether the current rates of change need to change
         if (this.props.filterAttackTime !== prevProps.filterAttackTime) {
@@ -231,6 +231,8 @@ export default class VCF extends React.Component {
     }
 
     triggerEnvelope (prevProps) {
+        console.log(this.props)
+        
         const { 
             audioContext, 
             currentKeys, 
@@ -241,6 +243,7 @@ export default class VCF extends React.Component {
             filterCutoffFrequency,
             filterEnvelopeAmount
         } = this.props
+        
         const currentKey = currentKeys[currentKeys.length - 1]
         const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
         
@@ -321,7 +324,7 @@ export default class VCF extends React.Component {
                 break
             }
             default: {
-                this.filters.forEach(filters => {
+                this.filters.forEach(filter => {
                     filter.Q.setValueAtTime(newValue, atTime)
                 })
                 break

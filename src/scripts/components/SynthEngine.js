@@ -1,47 +1,11 @@
 import React, { Component } from 'react'
 
 import VoiceContainer from './building-blocks/Voice-container'
-import Range from './input/Range'
-import Dropdown from './input/Dropdown'
-
-import { REGISTERED_KEYS } from '../constants/keyboard-constants'
-import { frequencyFromNoteNumber } from '../utils'
-
-const WAVEFORMS = [ 'sawtooth', 'triangle', 'square', 'sine' ]
+import ControlInterfaceContainer from './ControlInterface-container'
 
 export default class SynthEngine extends Component {
     constructor (props) {
         super(props)
-
-        this.state = {
-            oscillatorOne: {
-                oscillatorOctave: 3,
-                oscillatorDetune: 0,
-                oscillatorWaveform: 'sawtooth',
-                oscillatorGain: 0.5
-            },
-            oscillatorTwo: {
-                oscillatorOctave: 4,
-                oscillatorDetune: 0,
-                oscillatorWaveform: 'sawtooth',
-                oscillatorGain: 0.0
-            },
-            filterAttackTime: 1.0,
-            filterDecayTime: 1.0,
-            filterSustainLevel: 0.5,
-            filterReleaseTime: 0.3,
-            filterCutoffFrequency: 1000,
-            filterQ: 1.0,
-            filterEnvelopeAmount: 1.0,
-            amplifierAttackTime: 1.0,
-            amplifierDecayTime: 1.0,
-            amplifierSustainLevel: 0.5,
-            amplifierReleaseTime: 0.3,
-            controller: 'keyboard',
-            currentKey: null,
-            triggerStartTime: null,
-            retrigger: true
-        }
 
         this.handleOscillatorOneOctaveChange = this.handleOscillatorOneOctaveChange.bind(this)
         this.handleOscillatorOneDetuneChange = this.handleOscillatorOneDetuneChange.bind(this)
@@ -63,6 +27,7 @@ export default class SynthEngine extends Component {
         this.handleFilterQChange = this.handleFilterQChange.bind(this)
         this.handleFilterEnvelopeAmountChange = this.handleFilterEnvelopeAmountChange.bind(this)
         this.handleRetriggerChange = this.handleRetriggerChange.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -71,6 +36,11 @@ export default class SynthEngine extends Component {
         } else if (this.props.keyboard.currentKeys.length === 0 && this.state.triggerStartTime) {
             this.setState({ triggerStartTime: null })
         }
+    }
+
+
+    handleChange (parameter) {
+        this.setState(parameter)
     }
 
     handleOscillatorOneOctaveChange (e) {
@@ -172,151 +142,9 @@ export default class SynthEngine extends Component {
     render () {
         return (
             <div style={{ height: '100%', width: '100%' }}>
-                <VoiceContainer
-                    {...this.state} 
-                    audioContext={this.props.audioContext} />
-                <div className="main-controls">
-                    <div className="module" id="oscillator-controls">
-                        <div className="module-title">VCO</div>
-                        <div className="module-controls">
-                            <div className="module-controls-column">
-                                <Range title="Octave"
-                                    min={1}
-                                    max={7}
-                                    step={1}
-                                    value={this.state.oscillatorOne.oscillatorOctave}
-                                    handleChange={this.handleOscillatorOneOctaveChange} />
-                                <Range title="Detune"
-                                    min={-1.0}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.oscillatorOne.oscillatorDetune}
-                                    handleChange={this.handleOscillatorOneDetuneChange} />
-                                <Dropdown title="Waveform"
-                                    options={WAVEFORMS}
-                                    value={this.state.oscillatorOne.oscillatorWaveform}
-                                    handleChange={this.handleOscillatorOneWaveformChange} />
-                                <Range title="Gain"
-                                    min={0.0}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.oscillatorOne.oscillatorGain}
-                                    handleChange={this.handleOscillatorOneGainChange} />
-                            </div>
-                            <div className="module-controls-column">
-                                <Range title="Octave"
-                                    min={1}
-                                    max={7}
-                                    step={1}
-                                    value={this.state.oscillatorTwo.oscillatorOctave}
-                                    handleChange={this.handleOscillatorTwoOctaveChange} />
-                                <Range title="Detune"
-                                    min={-1.0}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.oscillatorTwo.oscillatorDetune}
-                                    handleChange={this.handleOscillatorTwoDetuneChange} />
-                                <Dropdown title="Waveform"
-                                    options={WAVEFORMS}
-                                    value={this.state.oscillatorTwo.oscillatorWaveform}
-                                    handleChange={this.handleOscillatorTwoWaveformChange} />
-                                <Range title="Gain"
-                                    min={0.0}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.oscillatorTwo.oscillatorGain}
-                                    handleChange={this.handleOscillatorTwoGainChange} />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="module" id="filter-controls">
-                        <div className="module-title">VCF</div>
-                        <div className="module-controls">
-                            <div className="module-controls-column">
-                                <Range title="Attack"
-                                    min={0.001}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.filterAttackTime}
-                                    handleChange={this.handleFilterAttackTimeChange} />
-                                <Range title="Decay"
-                                    min={0.001}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.filterDecayTime}
-                                    handleChange={this.handleFilterDecayTimeChange} />
-                                <Range title="Sustain"
-                                    min={0.001}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.filterSustainLevel}
-                                    handleChange={this.handleFilterSustainLevelChange} />
-                                <Range title="Release"
-                                    min={0.001}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.filterReleaseTime}
-                                    handleChange={this.handleFilterReleaseTimeChange} />
-                            </div>
-                            <div className="module-controls-column">
-                                <Range title="Cutoff"
-                                    min={20}
-                                    max={20000}
-                                    step={0.001}
-                                    value={this.state.filterCutoffFrequency}
-                                    handleChange={this.handleFilterCutoffFrequencyChange} />
-                                <Range title="Resonance"
-                                    min={0.001}
-                                    max={75}
-                                    step={0.001}
-                                    value={this.state.filterQ}
-                                    handleChange={this.handleFilterQChange} />
-                                <Range title="Envelope Amount"
-                                    min={0.0}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.filterEnvelopeAmount}
-                                    handleChange={this.handleFilterEnvelopeAmountChange} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="module" id="amplifier-controls">
-                        <div className="module-title">VCA</div>
-                        <div className="module-controls">
-                            <div className="module-controls-column">
-                                <Range title="Attack"
-                                    min={0.001}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.amplifierAttackTime}
-                                    handleChange={this.handleAmplifierAttackTimeChange} />
-                                <Range title="Decay"
-                                    min={0.001}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.amplifierDecayTime}
-                                    handleChange={this.handleAmplifierDecayTimeChange} />
-                                <Range title="Sustain"
-                                    min={0.001}
-                                    max={1.0}
-                                    step={0.001}
-                                    value={this.state.amplifierSustainLevel}
-                                    handleChange={this.handleAmplifierSustainLevelChange} />
-                                <Range title="Release"
-                                    min={0.000}
-                                    max={10.0}
-                                    step={0.001}
-                                    value={this.state.amplifierReleaseTime}
-                                    handleChange={this.handleAmplifierReleaseTimeChange} />
-                            </div>
-                            <div className="module-controls-column">
-                                <input type='button' name="retrigger-mode" onClick={this.handleRetriggerChange} value={`Retrigger ${this.state.retrigger ? 'on' : 'off'}`} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>Current Controller: {this.state.controller}</div>
+                <VoiceContainer audioContext={this.props.audioContext} />
+                <ControlInterfaceContainer />
+                <div>Current Controller: {this.props.controller}</div>
                 <div>Use AWSEDFTGYHUJKOLP; keys to play!</div>
             </div>
         )
