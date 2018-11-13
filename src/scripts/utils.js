@@ -24,3 +24,26 @@ export const calculateAttackFrequency = (filterCutoff, filterEnvelopeAmount) => 
 export const calculateSustainFrequency = (filterCutoff, filterEnvelopeAmount, filterSustainLevel) => {
     return calculateAttackFrequency(filterCutoff, filterEnvelopeAmount) * filterSustainLevel
 }
+
+export const handleGenericControlChange = (props, value) => {        
+    const data = {
+        parameter: props.parameter
+    }
+
+    isNaN(props.id) ? data.id = null : data.id = props.id
+    switch (props.valueType) {
+        case 'float': {
+            data.value = parseFloat(value)
+            break
+        }
+        case 'integer': {
+            data.value = parseInt(value)
+            break
+        }
+        case 'string': {
+            data.value = value
+        }
+    }
+    
+    props.handleChange(data)
+}

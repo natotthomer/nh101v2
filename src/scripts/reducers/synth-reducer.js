@@ -5,7 +5,7 @@ import {
 const _nulLSynth = {
     vcos: [
         {
-            oscillatorOctave: 3,
+            oscillatorOctave: 5,
             oscillatorDetune: 0,
             oscillatorWaveform: 'sawtooth',
             oscillatorGain: 0.5,

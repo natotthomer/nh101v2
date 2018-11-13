@@ -65,6 +65,7 @@ export default class Voice extends Component {
                         output={this.state._isMounted ? this.vcf.filter : null} />
                 </React.Fragment>
                 <VCF ref={vcf => (this.vcf = vcf)}
+                    currentKeys={this.props.currentKeys}
                     {...this.props.synth.vcf} audioContext={this.props.audioContext} />
                 <VCA ref={vca => (this.vca = vca)}
                     currentKeys={this.props.currentKeys}

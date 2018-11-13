@@ -37,6 +37,7 @@ export default class ControlInterface extends React.Component {
         return (
             <div className="main-controls">
                 <GenericModuleInterface modules={this.props.vcos} type={'vco'} />
+                <GenericModuleInterface modules={this.props.vcf} type={'vcf'} />
             </div>
         )
     }

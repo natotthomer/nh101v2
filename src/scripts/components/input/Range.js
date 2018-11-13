@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { handleGenericControlChange } from '../../utils'
+
 export default class Range extends React.Component {
     constructor (props) {
         super(props)
@@ -7,27 +9,8 @@ export default class Range extends React.Component {
         this.handleChange = this.handleChange.bind(this)
     }
 
-    handleChange (e) {        
-        const data = {
-            parameter: this.props.parameter
-        }
-
-        isNaN(this.props.id) ? data.id = null : data.id = this.props.id
-        switch (this.props.valueType) {
-            case 'float': {
-                data.value = parseFloat(e.target.value)
-                break
-            }
-            case 'integer': {
-                data.value = parseInt(e.target.value)
-                break
-            }
-            case 'string': {
-                data.value = e.target.value
-            }
-        }
-        
-        this.props.handleChange(data)
+    handleChange (e) {
+        handleGenericControlChange(this.props, e.target.value)
     }
 
     render () {

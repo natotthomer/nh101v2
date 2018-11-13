@@ -32,10 +32,6 @@ export default class VCF extends React.Component {
             sustainStageEnd: null
         }
 
-        this.filters.forEach(filter => {
-            filter.frequency.value = this.props.filterCutoffFrequency
-            filter.Q.value = this.props.filterQ
-        })
         // this.filter = this.props.audioContext.createBiquadFilter()
         // this.filter.frequency.value = this.props.filterCutoffFrequency
         // this.filter.Q.value = this.props.filterQ
@@ -52,7 +48,7 @@ export default class VCF extends React.Component {
     }
 
     componentDidUpdate (prevProps, prevState) {
-        // this.triggerEnvelope(prevProps)
+        this.triggerEnvelope(prevProps)
         // These are checking whether the values are changing while the envelope is in 
         // process, and therefore whether the current rates of change need to change
         if (this.props.filterAttackTime !== prevProps.filterAttackTime) {
@@ -83,6 +79,7 @@ export default class VCF extends React.Component {
             filterEnvelopeAmount
         } = this.props
 
+        console.log(this.state.attackStageEnd)
         if (triggerStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
             const timeSinceTrigger = audioContext.currentTime - triggerStartTime
             const newRemainingAttackTime = filterAttackTime - timeSinceTrigger

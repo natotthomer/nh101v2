@@ -1,7 +1,7 @@
 import React from 'react'
 
 import VCOBankInterface from './VCOBankInterface'
-import VCFInterface from './VCFInterface'
+import VCFInterfaceContainer from './VCFInterface-container'
 // import VCAInterface from './VCAInterface'
 
 const GenericModuleInterface = props => {
@@ -12,12 +12,12 @@ const GenericModuleInterface = props => {
             modules = <VCOBankInterface vcos={props.modules} />
             break
         }
-        case 'vca': {
-            modules = <VCAInterface vcf={props.modules} />
+        case 'vcf': {
+            modules = <VCFInterfaceContainer vcf={props.modules} />
             break
         }
-        case 'vcf': {
-            modules = <VCFInterface vca={props.modules} />
+        case 'vca': {
+            modules = <VCAInterface vca={props.modules} />
             break
         }
         default: {}
