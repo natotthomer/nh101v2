@@ -11,7 +11,7 @@ export default class AudioAnalyser extends React.Component {
         this.dataArray = new Uint8Array(this.bufferLength);
 
         this.state = { 
-            audioData: new Uint8Array(0) 
+            audioData: new Uint8Array(0)
         };
 
         this.tick = this.tick.bind(this)
@@ -23,12 +23,12 @@ export default class AudioAnalyser extends React.Component {
     
     componentDidUpdate (prevProps, prevState) {
         if (!prevProps.output && this.props.output) {
-            this.props.input.connect(this.analyser)
             this.analyser.connect(this.props.output)
+            this.props.input.connect(this.analyser)
         }
     }
 
-    componentWillUnmount() {
+    componentWillUnmount () {
         cancelAnimationFrame(this.rafId);
         this.analyser.disconnect();
         this.props.input.disconnect();
@@ -41,7 +41,7 @@ export default class AudioAnalyser extends React.Component {
         this.rafId = requestAnimationFrame(this.tick);
     }
     
-    render() {
+    render () {
         return <AudioVisualizer audioData={this.state.audioData} analyser={this.analyser} />;
     }
 }

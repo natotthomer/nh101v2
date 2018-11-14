@@ -23,15 +23,16 @@ export default class Voice extends Component {
     }
     
     componentDidMount () {
+        const { vcos } = this.props.synth
         this.vcoOne.oscillator.connect(this.vcoOneGain)
         this.vcoTwo.oscillator.connect(this.vcoTwoGain)
-
-        this.vcoOneGain.gain.setValueAtTime(0.5, this.props.audioContext.currentTime)
-        this.vcoTwoGain.gain.setValueAtTime(0.5, this.props.audioContext.currentTime)
-
+        
+        this.vcoOneGain.gain.setValueAtTime(vcos[0].oscillatorGain, this.props.audioContext.currentTime)
+        this.vcoTwoGain.gain.setValueAtTime(vcos[1].oscillatorGain, this.props.audioContext.currentTime)
+        
         this.vcoOneGain.connect(this.vcoMixer)
         this.vcoTwoGain.connect(this.vcoMixer)
-
+        
         this.vcoMixer.connect(this.vcf.output)
         this.vcf.output.connect(this.vca.amplifier)
         this.vca.amplifier.connect(this.props.audioContext.destination)
@@ -61,12 +62,19 @@ export default class Voice extends Component {
                         audioContext={this.props.audioContext} />
                     <AudioAnalyser 
                         audioContext={this.props.audioContext}
-                        input={this.vcoMixer} 
-                        output={this.state._isMounted ? this.vcf.filter : null} />
+                        input={this.vcoMixer}
+                        output={this.state._isMounted ? this.vcf.output : null} />
                 </React.Fragment>
-                <VCF ref={vcf => (this.vcf = vcf)}
-                    currentKeys={this.props.currentKeys}
-                    {...this.props.synth.vcf} audioContext={this.props.audioContext} />
+                <React.Fragment>
+                    <VCF ref={vcf => (this.vcf = vcf)}
+                        {...this.props.synth.vcf} 
+                        currentKeys={this.props.currentKeys}
+                        audioContext={this.props.audioContext} />
+                    <AudioAnalyser 
+                        audioContext={this.props.audioContext}
+                        input={this.state._isMounted ? this.vcf.output : null} 
+                        output={this.state._isMounted ? this.vca.amplifier : null} />
+                </React.Fragment>
                 <VCA ref={vca => (this.vca = vca)}
                     currentKeys={this.props.currentKeys}
                     {...this.props.synth.vca} audioContext={this.props.audioContext} />

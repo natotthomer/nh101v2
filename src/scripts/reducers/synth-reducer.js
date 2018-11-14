@@ -14,7 +14,7 @@ const _nulLSynth = {
             oscillatorOctave: 4,
             oscillatorDetune: 0,
             oscillatorWaveform: 'sawtooth',
-            oscillatorGain: 0.5,
+            oscillatorGain: 0.0,
             id: 1
         }
     ],
