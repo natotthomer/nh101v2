@@ -15,14 +15,13 @@ export default class VCF extends React.Component {
 
         this.filters.forEach((filter, idx) => {
             filter.type = 'lowpass'
-            if (!this.input) {
-                this.input = filter
-            } else if (idx === this.filters.length - 1) {
-                this.output = filter
-            } else {
-                this.filters[idx - 1].connect(filter)
-            }
+            filter.frequency.value = this.props.filterCutoffFrequency
+            filter.Q.value = this.props.filterQ
         })
+
+        this.input = this.filters[0]
+        this.output = this.filters[1]
+        this.input.connect(this.output)
 
         this.state = {
             time: 0.0,
@@ -32,10 +31,6 @@ export default class VCF extends React.Component {
             sustainStageEnd: null
         }
 
-        this.filters.forEach(filter => {
-            filter.frequency.value = this.props.filterCutoffFrequency
-            filter.Q.value = this.props.filterQ
-        })
         // this.filter = this.props.audioContext.createBiquadFilter()
         // this.filter.frequency.value = this.props.filterCutoffFrequency
         // this.filter.Q.value = this.props.filterQ

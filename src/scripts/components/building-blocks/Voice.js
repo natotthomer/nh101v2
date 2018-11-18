@@ -20,9 +20,36 @@ export default class Voice extends Component {
         this.vcoMixer = props.audioContext.createGain()
         this.vcf = null
         this.vca = null
+        this.waveshaperOne = props.audioContext.createWaveShaper()
+        this.waveshaperTwo = props.audioContext.createWaveShaper()
+
+        this.buildWaveShaperCurve = this.buildWaveShaperCurve.bind(this)
+    }
+
+    buildWaveShaperCurve (numSamples) {
+        const curve = new Float32Array(numSamples)
+
+        const oneEighth = numSamples / 8
+        
+        for (let i = 0; i < numSamples; i++) {
+            if (i < oneEighth) {
+                curve[i] = -1
+            } else if (i >= numSamples - oneEighth) {
+                curve[i] = 1
+            } else {
+                const value = -1 + ((2 / (numSamples - (oneEighth * 2)))) * (i - 256)
+                console.log(value)
+                curve[i] = value
+            }
+        }
+
+        return curve
     }
     
     componentDidMount () {
+        this.waveshaperOne.curve = this.buildWaveShaperCurve(2048)
+        // this.waveshaperTwo.curve = this.buildWaveShaperCurve(2048)
+
         this.vcoOne.oscillator.connect(this.vcoOneGain)
         this.vcoTwo.oscillator.connect(this.vcoTwoGain)
 
@@ -33,7 +60,9 @@ export default class Voice extends Component {
         this.vcoTwoGain.connect(this.vcoMixer)
 
         this.vcoMixer.connect(this.vcf.output)
-        this.vcf.output.connect(this.vca.amplifier)
+        this.vcf.output.connect(this.waveshaperOne)
+        this.waveshaperOne.connect(this.vca.amplifier)
+
         this.vca.amplifier.connect(this.props.audioContext.destination)
         this.setState({ _isMounted: true })
     }
@@ -43,7 +72,6 @@ export default class Voice extends Component {
             this.vcoOneGain.gain.setValueAtTime(this.props.oscillatorOne.oscillatorGain, this.props.audioContext.currentTime)
         } else if (this.props.oscillatorTwo.oscillatorGain !== prevProps.oscillatorTwo.oscillatorGain) {
             this.vcoTwoGain.gain.setValueAtTime(this.props.oscillatorTwo.oscillatorGain, this.props.audioContext.currentTime)
-
         }
     }
 
