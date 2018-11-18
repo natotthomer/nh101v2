@@ -321,7 +321,7 @@ export default class VCF extends React.Component {
                 break
             }
             default: {
-                this.filters.forEach(filters => {
+                this.filters.forEach(filter => {
                     filter.Q.setValueAtTime(newValue, atTime)
                 })
                 break
