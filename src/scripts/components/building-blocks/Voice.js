@@ -37,10 +37,10 @@ export default class Voice extends Component {
             } else if (i >= numSamples - oneEighth) {
                 curve[i] = 1
             } else {
-                const value = -1 + ((2 / (numSamples - (oneEighth * 2)))) * (i - 256)
-                console.log(value)
-                curve[i] = value
+                curve[i] = -1 + ((2 / (numSamples - (oneEighth * 2)))) * (i - 256)
             }
+            curve[i] = curve[i] - (Math.pow(curve[i], 3) / 3)
+            console.log(curve[i])
         }
 
         return curve
