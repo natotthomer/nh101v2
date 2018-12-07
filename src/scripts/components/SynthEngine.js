@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import VoiceContainer from './building-blocks/Voice-container'
+import VoiceContainer from './audio-components/Voice-container'
 import ControlInterfaceContainer from './ControlInterface-container'
 
 export default class SynthEngine extends Component {

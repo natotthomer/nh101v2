@@ -19,19 +19,20 @@ const _nulLSynth = {
         }
     ],
     vcf: {
-        filterAttackTime: 1.0,
-        filterDecayTime: 1.0,
-        filterSustainLevel: 0.5,
-        filterReleaseTime: 0.3,
-        filterCutoffFrequency: 1000,
-        filterQ: 1.0,
-        filterEnvelopeAmount: 1.0
+        attackTime: 1.0,
+        decayTime: 1.0,
+        sustainLevel: 0.5,
+        releaseTime: 0.3,
+        cutoffFrequency: 1000,
+        Q: 1.0,
+        envelopeAmount: 1.0
     },
     vca: {
-        amplifierAttackTime: 1.0,
-        amplifierDecayTime: 1.0,
-        amplifierSustainLevel: 0.5,
-        amplifierReleaseTime: 0.3
+        attackTime: 1.0,
+        decayTime: 1.0,
+        sustainLevel: 0.5,
+        releaseTime: 0.3,
+        envelopeAmount: 0.0
     },
     controller: 'keyboard',
     currentKey: null,

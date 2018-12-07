@@ -47,3 +47,31 @@ export const handleGenericControlChange = (props, value) => {
     
     props.handleChange(data)
 }
+
+export const createNode = (audioContext, nodeType, output) => {
+    const node = null
+    
+    switch (nodeType.toLowerCase()) {
+        case 'oscillator': {
+            node = audioContext.createOscillator()
+            break;
+        }
+        case 'gain': {
+            node = audioContext.createGain()
+            break;
+        }
+        case 'filter': {
+            node = audioContext.createBiquadFilter()
+            break;
+        }
+        default: {
+            node = null
+        }
+    }
+    
+    if (node) {
+        node.connect(output)
+    }
+
+    return node
+}

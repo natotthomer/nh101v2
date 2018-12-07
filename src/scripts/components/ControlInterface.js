@@ -1,6 +1,6 @@
 import React from 'react'
 
-import GenericModuleInterface from './building-blocks/GenericModuleInterface'
+import GenericModuleInterface from './interface-components/GenericModuleInterface'
 // import VCFInterface from './building-blocks/VCFInterface'
 // import VCAInterface from './building-blocks/VCAInterface'
 

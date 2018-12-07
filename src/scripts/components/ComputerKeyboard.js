@@ -18,8 +18,10 @@ export default class ComputerKeyboard extends Component {
     }
 
     handleKeyUp (e) {
-        const numberOfKeys = this.props.keyboard.currentKeys.length
-        this.props.keyUp(e.keyCode)
+        if (this.props.keyboard.currentKeys.indexOf(e.keyCode) >= 0 && REGISTERED_KEYS.includes(e.keyCode)) {
+            const numberOfKeys = this.props.keyboard.currentKeys.length
+            this.props.keyUp(e.keyCode)
+        }
     }
 
     componentDidMount () {

@@ -37,12 +37,6 @@ export default class VCF extends React.Component {
             sustainStageEnd: null
         }
 
-        console.log(this.output)
-
-        // this.filter = this.props.audioContext.createBiquadFilter()
-        // this.filter.frequency.value = this.props.filterCutoffFrequency
-        // this.filter.Q.value = this.props.filterQ
-
         this.updateFrequency = this.updateFrequency.bind(this)
         this.updateQ = this.updateQ.bind(this)
         this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
