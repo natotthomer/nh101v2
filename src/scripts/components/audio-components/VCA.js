@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Envelope from './Envelope'
+import { buildCanvas } from '../../synth-charts'
 
 export default class VCA extends React.Component {
   constructor (props) {
@@ -10,6 +11,10 @@ export default class VCA extends React.Component {
     this.renderChildren = this.renderChildren.bind(this)
 
     this.setUpAmplifier()
+  }
+
+  componentDidMount () {
+    buildCanvas(this.amplifier.gain)
   }
 
   setUpAmplifier () {
