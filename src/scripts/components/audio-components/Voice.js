@@ -7,21 +7,23 @@ import AudioAnalyser from './audio-analysis/AudioAnalyser'
 
 export default class Voice extends Component {
   render () {
+    const { audioContext, currentKeys, synth } = this.props
+    
     const childrenProps = {
       vcaProps: { 
-        audioContext: this.props.audioContext,
-        currentKeys: this.props.currentKeys,
-        moduleParameters: this.props.synth.vca,
-        retrigger: this.props.synth.retrigger
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        moduleParameters: synth.vca,
+        retrigger: synth.retrigger
       },
       vcfProps: {
-        audioContext: this.props.audioContext,
-        currentKeys: this.props.currentKeys,
-        moduleParameters: this.props.synth.vcf
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        moduleParameters: synth.vcf
       },
-      vcoProps: this.props.synth.vcos.map(vcoData => ({ 
-        audioContext: this.props.audioContext,
-        currentKeys: this.props.currentKeys,
+      vcoProps: synth.vcos.map(vcoData => ({ 
+        audioContext: audioContext,
+        currentKeys: currentKeys,
         moduleParameters: vcoData 
       }))
     }
@@ -30,7 +32,7 @@ export default class Voice extends Component {
     
     return (
       <React.Fragment>
-        <VCA {...vcaProps} ref={vca => (this.vca = vca)}>
+        <VCA parentNode={audioContext.destination} {...vcaProps} ref={vca => (this.vca = vca)}>
           <VCF {...vcfProps} ref={vcf => (this.vcf = vcf)} >
             <VCO {...vcoProps[0]} ref={vcoOne => (this.vcoOne = vcoOne)} />
             <VCO {...vcoProps[1]} ref={vcoTwo => (this.vcoTwo = vcoTwo)} />

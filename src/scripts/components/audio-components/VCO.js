@@ -43,7 +43,7 @@ export default class VCO extends React.Component {
   renderChildren () {
     return React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
-        parentNode: this.filter
+        parentNode: this.oscillator
       })
     })
   }
