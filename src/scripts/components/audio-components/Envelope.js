@@ -6,13 +6,15 @@ export default class Envelope extends React.Component {
 
     this.param = this.props.param
     
-    this.updateGain = this.updateGain.bind(this)
+    this.updateAudioParam = this.updateAudioParam.bind(this)
     this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
     this.triggerEnvelope = this.triggerEnvelope.bind(this)
     this.updateAttack = this.updateAttack.bind(this)
     this.updateDecay = this.updateDecay.bind(this)
     this.updateSustain = this.updateSustain.bind(this)
     this.updateRelease = this.updateRelease.bind(this)
+    this.getValueToAttackTo = this.getValueToAttackTo.bind(this)
+    this.getValueToSustainTo = this.getValueToSustainTo.bind(this)
 
     this.state = {
       time: 0.0,
@@ -27,48 +29,62 @@ export default class Envelope extends React.Component {
     this.triggerEnvelope(prevProps)
     // These are checking whether the values are changing while the envelope is in 
     // process, and therefore whether the current rates of change need to change
-    if (this.props.attackTime !== prevProps.attackTime) {
-        this.updateAttack()
-    } else if (this.props.decayTime !== prevProps.decayTime) {
-        this.updateDecay()
-    } else if (this.props.sustainLevel !== prevProps.sustainLevel) {
-        this.updateSustain()
-    } else if (this.props.releaseTime !== prevProps.releaseTime) {
-        this.updateRelease()
+    if (this.props.moduleParameter.attackTime !== prevProps.moduleParameter.attackTime) {
+      this.updateAttack()
+    } else if (this.props.moduleParameter.decayTime !== prevProps.moduleParameter.decayTime) {
+      this.updateDecay()
+    } else if (this.props.moduleParameter.sustainLevel !== prevProps.moduleParameter.sustainLevel) {
+      this.updateSustain()
+    } else if (this.props.moduleParameter.releaseTime !== prevProps.moduleParameter.releaseTime) {
+      this.updateRelease()
     }
   }
 
+  getValueToAttackTo () {
+    const { moduleParameter } = this.props
+    const { range, baseValue, envelopeAmount } = moduleParameter
+
+    return ((range[1] - baseValue) * envelopeAmount) + baseValue
+  }
+
+  getValueToSustainTo () {
+    const { moduleParameter } = this.props
+    const { sustainLevel } = moduleParameter
+
+    return this.getValueToAttackTo() * sustainLevel
+  }
+
   updateAttack () {
-    const { triggerStartTime, audioContext, attackTime, decayTime, sustainLevel } = this.props
+    const { triggerStartTime, audioContext, attackTime, decayTime } = this.props
 
     if (triggerStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
-        const timeSinceTrigger = audioContext.currentTime - triggerStartTime
-        const newRemainingAttackTime = attackTime - timeSinceTrigger
-        
-        let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
-        let decayStageEnd = attackStageEnd + decayTime
-        
-        this.cancelScheduledValues()
-        this.updateGain(this.param.value)
-        if (attackStageEnd < audioContext.currentTime) {
-            attackStageEnd = audioContext.currentTime
-            decayStageEnd = audioContext.currentTime + decayTime
-        }
-        this.updateGain(1, attackStageEnd, 'linear')
-        this.setState({ attackStageEnd, decayStageEnd })
-        this.updateGain(sustainLevel, decayStageEnd, 'linear')
+      const timeSinceTrigger = audioContext.currentTime - triggerStartTime
+      const newRemainingAttackTime = attackTime - timeSinceTrigger
+      
+      let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
+      let decayStageEnd = attackStageEnd + decayTime
+      
+      this.cancelScheduledValues()
+      this.updateAudioParam(this.param.value)
+      if (attackStageEnd < audioContext.currentTime) {
+        attackStageEnd = audioContext.currentTime
+        decayStageEnd = audioContext.currentTime + decayTime
+      }
+      this.updateAudioParam(this.getValueToAttackTo(), attackStageEnd, 'linear')
+      this.setState({ attackStageEnd, decayStageEnd })
+      this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
     }
   }
 
   updateDecay () {
-    const { triggerStartTime, audioContext, decayTime, sustainLevel } = this.props
+    const { triggerStartTime, audioContext, decayTime } = this.props
 
     if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
       const decayStageEnd = this.state.attackStageEnd + decayTime
           
       this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
-      this.updateGain(sustainLevel, decayStageEnd, 'linear')
+      this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
       this.setState({ decayStageEnd })
     } else if (triggerStartTime && (audioContext.currentTime < this.state.decayStageEnd) && (audioContext.currentTime > this.state.attackStageEnd)) {
       const timeSinceAttackStageEnded = audioContext.currentTime - this.state.attackStageEnd
@@ -76,69 +92,72 @@ export default class Envelope extends React.Component {
 
       let decayStageEnd = audioContext.currentTime + newRemainingDecayTime
       this.cancelScheduledValues()
-      this.updateGain(this.param.value)
+      this.updateAudioParam(this.param.value)
           
       if (decayStageEnd < audioContext.currentTime) {
         decayStageEnd = audioContext.currentTime
       }
 
-      this.updateGain(sustainLevel, decayStageEnd, 'linear')
+      this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
       this.setState({ decayStageEnd })
     }
   }
 
   updateSustain () {
-    const { triggerStartTime, audioContext, sustainLevel, decayTime } = this.props
+    const { triggerStartTime, audioContext, decayTime } = this.props
     if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
       const decayStageEnd = this.state.attackStageEnd + decayTime
           
       this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
-      this.updateGain(sustainLevel, decayStageEnd, 'linear')
+      this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
       this.setState({ decayStageEnd })
     } else if (triggerStartTime && audioContext.currentTime < this.state.decayStageEnd) {
       this.param.cancelScheduledValues(audioContext.currentTime)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
-      this.updateGain(sustainLevel, this.state.decayStageEnd, 'linear')
+      this.updateAudioParam(this.getValueToSustainTo(), this.state.decayStageEnd, 'linear')
     } else if (triggerStartTime) {
-      this.updateGain(sustainLevel)
+      this.updateAudioParam(this.getValueToSustainTo())
     }
   }
 
   updateRelease () {
-      if (this.param.value > 0 && this.state.releaseStageEnd) {
-          const { releaseTime, audioContext } = this.props
-          
-          const timeSinceSustainStageEnded = audioContext.currentTime - this.state.sustainStageEnd
-          const newRemainingReleaseTime = releaseTime - timeSinceSustainStageEnded
+    if (this.param.value > 0 && this.state.releaseStageEnd) {
+      const { moduleParameter, audioContext } = this.props
+      
+      const timeSinceSustainStageEnded = audioContext.currentTime - this.state.sustainStageEnd
+      const newRemainingReleaseTime = releaseTime - timeSinceSustainStageEnded
 
-          let releaseStageEnd = audioContext.currentTime + newRemainingReleaseTime
+      let releaseStageEnd = audioContext.currentTime + newRemainingReleaseTime
 
-          this.cancelScheduledValues()
-          this.updateGain(this.param.value)
+      this.cancelScheduledValues()
+      this.updateAudioParam(this.param.value)
 
-          if (releaseStageEnd < audioContext.currentTime) {
-              releaseStageEnd = audioContext.currentTime
-          }
-          
-          this.updateGain(0, releaseStageEnd, 'linear')
-          this.setState({ releaseStageEnd })
+      if (releaseStageEnd < audioContext.currentTime) {
+        releaseStageEnd = audioContext.currentTime
       }
+      
+      this.updateAudioParam(baseValue, releaseStageEnd, 'linear')
+      this.setState({ releaseStageEnd })
+    }
   }
 
   triggerEnvelope (prevProps) {
     const { 
       audioContext, 
       currentKeys, 
-      synth
+      moduleParameter
     } = this.props
 
     const {
       attackTime, 
       decayTime,
       sustainLevel,
-      releaseTime
-    } = synth.vca
+      releaseTime,
+      baseValue,
+      range,
+      envelopeAmount
+    } = moduleParameter
     const currentKey = currentKeys[currentKeys.length - 1]
     const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
     
@@ -155,26 +174,23 @@ export default class Envelope extends React.Component {
         releaseStageEnd: null
       })
       this.cancelScheduledValues()
-      this.updateGain(0, audioContext.currentTime)
-      this.updateGain(1, attackTime + audioContext.currentTime, 'linear')
-      this.updateGain(sustainLevel, decayTime + attackTime + audioContext.currentTime, 'linear')
+      this.updateAudioParam(baseValue, audioContext.currentTime)
+      this.updateAudioParam(this.getValueToAttackTo(), attackTime + audioContext.currentTime, 'linear')
+      this.updateAudioParam(sustainLevel, decayTime + attackTime + audioContext.currentTime, 'linear')
     } else if (currentKey !== prevKey && currentKey === undefined) {
       // initiate Release stage
       this.cancelScheduledValues()
-      this.updateGain(this.param.value)
-      this.updateGain(0, releaseTime + audioContext.currentTime, 'linear')
+      this.updateAudioParam(this.param.value)
+      this.updateAudioParam(baseValue, releaseTime + audioContext.currentTime, 'linear')
       this.setState({ attackStageEnd: null, decayStageEnd: null, releaseStageEnd: audioContext.currentTime + releaseTime, sustainStageEnd: audioContext.currentTime })
     }
   }
 
   cancelScheduledValues (atTime = this.props.audioContext.currentTime) {
-      this.param.cancelScheduledValues(atTime)
+    this.param.cancelScheduledValues(atTime)
   }
 
-  updateGain (newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
-    console.log('value', newValue)
-    console.log('time', atTime)
-    console.log(this.props)
+  updateAudioParam (newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
     switch (slopeType) {
       case 'exponential': {
         // Will break if `newValue` is 0 and slopeType is `exponential` (needs to
@@ -195,7 +211,6 @@ export default class Envelope extends React.Component {
 
   
   render () {
-    console.log(this.props)
     return (
       <div>Envelope</div>
     )

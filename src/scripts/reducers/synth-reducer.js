@@ -5,7 +5,7 @@ import {
 const _nulLSynth = {
     vcos: [
         {
-            oscillatorOctave: 5,
+            oscillatorOctave: 4,
             oscillatorDetune: 0,
             oscillatorWaveform: 'sawtooth',
             oscillatorGain: 0.5,
@@ -19,20 +19,30 @@ const _nulLSynth = {
         }
     ],
     vcf: {
-        attackTime: 1.0,
-        decayTime: 1.0,
-        sustainLevel: 0.5,
-        releaseTime: 0.3,
-        cutoffFrequency: 1000,
-        Q: 1.0,
-        envelopeAmount: 1.0
+        frequency: {
+            baseValue: 1000,
+            attackTime: 1.0,
+            decayTime: 1.0,
+            sustainLevel: 0.5,
+            releaseTime: 0.3,
+            envelopeAmount: 1.0,
+            range: [20, 20000]
+        },
+        Q: {
+            baseValue: 1.0,
+            range: [0.0, 40.0]
+        }
     },
     vca: {
-        attackTime: 1.0,
-        decayTime: 1.0,
-        sustainLevel: 0.5,
-        releaseTime: 0.3,
-        envelopeAmount: 0.0
+        gain: {
+            baseValue: 0.0,
+            attackTime: 1.0,
+            decayTime: 1.0,
+            sustainLevel: 0.5,
+            releaseTime: 0.3,
+            envelopeAmount: 1.0,
+            range: [0.0, 1.0]
+        }
     },
     controller: 'keyboard',
     currentKey: null,
