@@ -11,7 +11,8 @@ export default class Voice extends Component {
       vcaProps: { 
         audioContext: this.props.audioContext,
         currentKeys: this.props.currentKeys,
-        moduleParameters: this.props.synth.vca
+        moduleParameters: this.props.synth.vca,
+        retrigger: this.props.synth.retrigger
       },
       vcfProps: {
         audioContext: this.props.audioContext,
