@@ -1,4 +1,4 @@
-export const buildCanvas = parameter => {
+export const buildCanvas = (parameter, elementID) => {
   CanvasJS.addColorSet("greenShades", [//colorSet Array
     "#9F4F0F",
     "#008080",
@@ -8,7 +8,7 @@ export const buildCanvas = parameter => {
   ])
 
   var dps = []; // dataPoints
-  var chart = new CanvasJS.Chart("chartContainer", {
+  var chart = new CanvasJS.Chart(elementID, {
     title: {
       text: "Amplifier gain over time"
     },

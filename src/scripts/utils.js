@@ -25,8 +25,9 @@ export const calculateSustainFrequency = (filterCutoff, filterEnvelopeAmount, fi
   return calculateAttackFrequency(filterCutoff, filterEnvelopeAmount) * filterSustainLevel
 }
 
-export const handleGenericControlChange = (props, value) => {        
+export const handleGenericControlChange = (props, value) => {
   const data = {
+    audioParam: props.audioParam,
     parameter: props.parameter
   }
 

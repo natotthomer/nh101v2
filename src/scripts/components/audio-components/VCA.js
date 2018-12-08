@@ -12,9 +12,9 @@ export default class VCA extends React.Component {
 
     this.setUpAmplifier()
   }
-
+  
   componentDidMount () {
-    buildCanvas(this.amplifier.gain)
+    buildCanvas(this.amplifier.gain, 'amp-chart')
   }
 
   setUpAmplifier () {
@@ -37,7 +37,6 @@ export default class VCA extends React.Component {
   }
   
   render () {
-    console.log(this.props)
     const envelopeProps = {
       audioContext: this.audioContext,
       currentKeys: this.props.currentKeys,

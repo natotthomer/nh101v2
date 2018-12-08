@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { calculateAttackFrequency, calculateSustainFrequency } from '../../utils'
-
 import Envelope from './Envelope'
+import { calculateAttackFrequency, calculateSustainFrequency } from '../../utils'
+import { buildCanvas } from '../../synth-charts'
 
 export default class VCF extends React.Component {
   constructor (props) {
@@ -15,10 +15,15 @@ export default class VCF extends React.Component {
   }
 
   setUpFilter () {
+    console.log(this.props)
     this.audioContext = this.props.audioContext
     this.filter = this.audioContext.createBiquadFilter()
-    this.filter.frequency.value = 1000
+    this.filter.frequency.value = this.props.moduleParameters.frequency.baseValue
     this.filter.connect(this.props.parentNode)
+  }
+
+  componentDidMount () {
+    buildCanvas(this.filter.frequency, 'filter-chart')
   }
 
   // constructor (props) {
@@ -355,9 +360,16 @@ export default class VCF extends React.Component {
   }
 
   render () {
+    const envelopeProps = {
+      audioContext: this.audioContext,
+      currentKeys: this.props.currentKeys,
+      moduleParameter: this.props.moduleParameters.frequency,
+      retrigger: this.props.retrigger
+    }
     
     return (
       <React.Fragment>
+        <Envelope param={this.filter.frequency} {...envelopeProps} />
         {this.renderChildren()}
       </React.Fragment>
     )

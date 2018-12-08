@@ -143,7 +143,6 @@ export default class Envelope extends React.Component {
   }
 
   triggerEnvelope (prevProps) {
-    console.log(this.props)
     const { 
       audioContext, 
       currentKeys, 
@@ -177,7 +176,7 @@ export default class Envelope extends React.Component {
       this.cancelScheduledValues()
       this.updateAudioParam(baseValue, audioContext.currentTime)
       this.updateAudioParam(this.getValueToAttackTo(), attackTime + audioContext.currentTime, 'linear')
-      this.updateAudioParam(sustainLevel, decayTime + attackTime + audioContext.currentTime, 'linear')
+      this.updateAudioParam(this.getValueToSustainTo(), decayTime + attackTime + audioContext.currentTime, 'linear')
     } else if (currentKey !== prevKey && currentKey === undefined) {
       // initiate Release stage
       this.cancelScheduledValues()

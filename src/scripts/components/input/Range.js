@@ -12,7 +12,7 @@ export default class Range extends React.Component {
   handleChange (e) {
     handleGenericControlChange(this.props, e.target.value)
   }
-
+  
   render () {
     return (
       <div className='input-range'>
@@ -23,7 +23,7 @@ export default class Range extends React.Component {
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}
-          value={this.props[this.props.parameter]}
+          value={this.props.value}
           onChange={this.handleChange} />
         <div>{this.props.value}</div>
       </div>

@@ -1,8 +1,6 @@
 import React from 'react'
 
 import GenericModuleInterface from './interface-components/GenericModuleInterface'
-// import VCFInterface from './building-blocks/VCFInterface'
-// import VCAInterface from './building-blocks/VCAInterface'
 
 export default class ControlInterface extends React.Component {
   constructor (props) {
@@ -37,6 +35,7 @@ export default class ControlInterface extends React.Component {
       <div className="main-controls">
         <GenericModuleInterface modules={this.props.vcos} type={'vco'} />
         <GenericModuleInterface modules={this.props.vcf} type={'vcf'} />
+        <GenericModuleInterface modules={this.props.vca} type={'vca'} />
       </div>
     )
   }

@@ -15,7 +15,10 @@ export default class SynthEngine extends Component {
   render () {
     return (
       <div style={{ height: '100%', width: '100%' }}>
-        <div id="chartContainer" style={{ height: "300px", width: "100%" }} />
+        <div style={{ display: 'flex' }}>
+          <div id="filter-chart" style={{ height: "200px", width: "50%" }} />
+          <div id="amp-chart" style={{ height: "200px", width: "50%" }} />
+        </div>
         <VoiceContainer audioContext={this.props.audioContext} />
         <ControlInterfaceContainer />
         <div>Current Controller: {this.props.controller}</div>

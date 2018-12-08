@@ -4,6 +4,8 @@ import EnvelopeInterface from './EnvelopeInterface'
 import Range from '../input/Range'
 
 const VCFInterface = props => {
+  const { attackTime, decayTime, sustainLevel, releaseTime, baseValue, envelopeAmount } = props.vcf.frequency
+  
   const inputSettings = {
     cutoff: {
       title: 'cutoff',
@@ -11,15 +13,19 @@ const VCFInterface = props => {
       max: 20000,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterCutoffFrequency'
+      audioParam: 'frequency',
+      parameter: 'baseValue',
+      value: baseValue
     },
     resonance: {
       title: 'resonance',
       min: 0.001,
-      max: 75,
+      max: 40,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterQ'
+      audioParam: 'Q',
+      parameter: 'baseValue',
+      value: props.vcf.Q.baseValue
     },
     envelopeAmount: {
       title: 'Envelope Amount',
@@ -27,7 +33,9 @@ const VCFInterface = props => {
       max: 1.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterEnvelopeAmount'
+      audioParam: 'frequency',
+      parameter: 'envelopeAmount',
+      value: envelopeAmount
     },
     attackTime: {
       title: 'Attack',
@@ -35,7 +43,9 @@ const VCFInterface = props => {
       max: 10.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterAttackTime'
+      audioParam: 'frequency',
+      parameter: 'attackTime',
+      value: attackTime
     },
     decayTime: {
       title: 'Decay',
@@ -43,7 +53,9 @@ const VCFInterface = props => {
       max: 10.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterDecayTime'
+      audioParam: 'frequency',
+      parameter: 'decayTime',
+      value: decayTime
     },
     sustainLevel: {
       title: 'Sustain',
@@ -51,7 +63,9 @@ const VCFInterface = props => {
       max: 1.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterSustainLevel'
+      audioParam: 'frequency',
+      parameter: 'sustainLevel',
+      value: sustainLevel
     },
     releaseTime: {
       title: 'Release',
@@ -59,7 +73,9 @@ const VCFInterface = props => {
       max: 10.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'filterReleaseTime'
+      audioParam: 'frequency',
+      parameter: 'releaseTime',
+      value: releaseTime
     }
   }
   
@@ -69,15 +85,15 @@ const VCFInterface = props => {
         <EnvelopeInterface
           name={'filter'}
           handleChange={props.updateVCF}
-          attackTime={Object.assign({}, inputSettings.attackTime, { value: props.vcf.filterAttackTime })}
-          decayTime={Object.assign({}, inputSettings.decayTime, { value: props.vcf.filterDecayTime })}
-          sustainLevel={Object.assign({}, inputSettings.sustainLevel, { value: props.vcf.filterSustainLevel })}
-          releaseTime={Object.assign({}, inputSettings.releaseTime, { value: props.vcf.filterReleaseTime })} />
+          attackTime={Object.assign({}, inputSettings.attackTime)}
+          decayTime={Object.assign({}, inputSettings.decayTime)}
+          sustainLevel={Object.assign({}, inputSettings.sustainLevel)}
+          releaseTime={Object.assign({}, inputSettings.releaseTime)} />
       </div>
       <div className="module-controls-column">
-        <Range {...props.vcf} {...inputSettings.cutoff} handleChange={props.updateVCF} />
-        <Range {...props.vcf} {...inputSettings.resonance} handleChange={props.updateVCF} />
-        <Range {...props.vcf} {...inputSettings.envelopeAmount} handleChange={props.updateVCF} />
+        <Range {...inputSettings.cutoff} handleChange={props.updateVCF} />
+        <Range {...inputSettings.resonance} handleChange={props.updateVCF} />
+        <Range {...inputSettings.envelopeAmount} handleChange={props.updateVCF} />
       </div>
     </React.Fragment>
   )

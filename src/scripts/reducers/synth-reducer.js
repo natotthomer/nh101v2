@@ -21,7 +21,7 @@ const _nulLSynth = {
   ],
   vcf: {
     frequency: {
-      baseValue: 1000,
+      baseValue: 2000,
       attackTime: 1.0,
       decayTime: 1.0,
       sustainLevel: 0.5,
@@ -63,13 +63,13 @@ const SynthReducer = (state = _nulLSynth, action) => {
     }
     case UPDATE_VCF: {
       const vcf = {...state.vcf}
-      vcf[action.data.parameter] = action.data.value
+      vcf[action.data.audioParam][action.data.parameter] = action.data.value
 
       return Object.assign({}, state, { vcf })
     }
     case UPDATE_VCA: {
       const vca = {...state.vca}
-      vca[action.data.parameter] = action.data.value
+      vca[action.data.audioParam][action.data.parameter] = action.data.value
       
       return Object.assign({}, state, { vca })
     }
