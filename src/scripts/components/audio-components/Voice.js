@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import VCO from './VCO'
 import VCA from './VCA'
 import VCF from './VCF'
-import AudioAnalyser from './audio-analysis/AudioAnalyser'
+import Echo from './Echo'
 
 export default class Voice extends Component {
   render () {
@@ -32,12 +32,14 @@ export default class Voice extends Component {
     
     return (
       <React.Fragment>
-        <VCA parentNode={audioContext.destination} {...vcaProps} ref={vca => (this.vca = vca)}>
-          <VCF {...vcfProps} ref={vcf => (this.vcf = vcf)} >
-            <VCO {...vcoProps[0]} ref={vcoOne => (this.vcoOne = vcoOne)} />
-            <VCO {...vcoProps[1]} ref={vcoTwo => (this.vcoTwo = vcoTwo)} />
-          </VCF>
-        </VCA>
+        <Echo audioContext={audioContext} parentNode={audioContext.destination}>
+          <VCA {...vcaProps}>
+            <VCF {...vcfProps}>
+              <VCO {...vcoProps[0]} />
+              <VCO {...vcoProps[1]} />
+            </VCF>
+          </VCA>
+        </Echo>
       </React.Fragment>
     )
   }

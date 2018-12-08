@@ -18,14 +18,12 @@ export default class VCA extends React.Component {
   }
 
   setUpAmplifier () {
+    console.log(this.props)
     this.audioContext = this.props.audioContext
     this.amplifier = this.audioContext.createGain()
     this.amplifier.gain.value = 0
     this.amplifier.connect(this.props.parentNode)
-  }
-  
-  connectInput (input) {
-    input.connect(this.amplifier)
+    this.amplifier.connect(this.audioContext.destination)
   }
 
   renderChildren () {
