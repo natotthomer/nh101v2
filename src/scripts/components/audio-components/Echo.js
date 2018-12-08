@@ -10,24 +10,42 @@ export default class Echo extends React.Component {
     this.setUpEcho()
   }
 
+  componentDidUpdate (prevProps, prevState) {
+    const { echoFeedback, echoTime, echoVolume } = this.props.moduleParameters
+    this.echoVolume.gain.setValueAtTime(echoVolume, this.audioContext.currentTime)
+    this.feedback.gain.setValueAtTime(echoFeedback, this.audioContext.currentTime)
+    this.echo.delayTime.setValueAtTime(echoTime, this.audioContext.currentTime)
+  }
+
   setUpEcho () {
-    this.audioContext = this.props.audioContext
-    this.echo = this.audioContext.createDelay()
-    this.echo.delayTime.value = 1.5
+    const { audioContext, moduleParameters, parentNode } = this.props
+    this.audioContext = audioContext
+
+    this.output = this.audioContext.createGain()
+    this.echoVolume = this.audioContext.createGain()
+
+    this.echoVolume.gain.value = moduleParameters.echoVolume
+
+    this.echo = this.audioContext.createDelay(10.0)
+    this.echo.delayTime.value = moduleParameters.echoTime
 
     this.feedback = this.audioContext.createGain()
-    this.feedback.gain.value = 0.8
+    this.feedback.gain.value = moduleParameters.echoFeedback
     
     this.echo.connect(this.feedback)
     this.feedback.connect(this.echo)
 
-    this.echo.connect(this.props.parentNode)
+    this.output.connect(this.echo)
+    this.echo.connect(this.echoVolume)
+    this.echoVolume.connect(this.output)
+
+    this.output.connect(parentNode)
   }
 
   renderChildren () {
-    return React.Children.map(this.props.children, child => {
+    return React.Children.map(this.props.children, (child, index) => {
       return React.cloneElement(child, {
-        parentNode: this.echo
+        parentNode: this.output
       })
     })
   }

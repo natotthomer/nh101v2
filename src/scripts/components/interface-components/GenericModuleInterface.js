@@ -3,6 +3,7 @@ import React from 'react'
 import VCOBankInterface from './VCOBankInterface'
 import VCFInterfaceContainer from './VCFInterface-container'
 import VCAInterfaceContainer from './VCAInterface-container'
+import EchoInterfaceContainer from './EchoInterface-container'
 
 const GenericModuleInterface = props => {
   let modules
@@ -18,6 +19,10 @@ const GenericModuleInterface = props => {
     }
     case 'vca': {
       modules = <VCAInterfaceContainer vca={props.modules} />
+      break
+    }
+    case 'echo': {
+      modules = <EchoInterfaceContainer echo={props.modules} />
       break
     }
     default: {}

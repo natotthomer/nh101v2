@@ -9,6 +9,7 @@ export default class VCA extends React.Component {
 
     this.setUpAmplifier = this.setUpAmplifier.bind(this)
     this.renderChildren = this.renderChildren.bind(this)
+    this.getOutput = this.getOutput.bind(this)
 
     this.setUpAmplifier()
   }
@@ -24,6 +25,10 @@ export default class VCA extends React.Component {
     this.amplifier.gain.value = 0
     this.amplifier.connect(this.props.parentNode)
     this.amplifier.connect(this.audioContext.destination)
+  }
+
+  getOutput () {
+    return this.amplifier
   }
 
   renderChildren () {

@@ -1,6 +1,6 @@
 import {
   UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, UPDATE_GATE_START_TIME, 
-  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER
+  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO
 } from '../constants/synth-constants'
 
 const _nulLSynth = {
@@ -45,6 +45,11 @@ const _nulLSynth = {
       range: [0.0, 1.0]
     }
   },
+  echo: {
+    echoVolume: 0.0,
+    echoFeedback: 0.0,
+    echoTime: 0.5
+  },
   controller: 'keyboard',
   currentKey: null,
   gateStartTime: null,
@@ -87,6 +92,11 @@ const SynthReducer = (state = _nulLSynth, action) => {
       const retrigger = !state.trigger
 
       return Object.assign({}, state, { retrigger })
+    }
+    case UPDATE_ECHO: {
+      const { echo } = state
+      echo[action.data.parameter] = action.data.value
+      return Object.assign({}, state, { echo: {...echo} })
     }
     default: 
       return state

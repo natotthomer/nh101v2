@@ -1,6 +1,6 @@
 import { 
   UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, UPDATE_GATE_START_TIME, 
-  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER
+  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO
 } from '../constants/synth-constants'
 
 export const updateVCO = data => dispatch => dispatch({
@@ -30,4 +30,9 @@ export const updateCurrentKey = data => dispatch => dispatch({
 
 export const updateRetrigger = () => dispatch => dispatch({
   type: UPDATE_RETRIGGER
+})
+
+export const updateEcho = data => dispatch => dispatch({
+  type: UPDATE_ECHO,
+  data
 })
