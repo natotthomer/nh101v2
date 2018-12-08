@@ -174,6 +174,7 @@ export default class Envelope extends React.Component {
         releaseStageEnd: null
       })
       this.cancelScheduledValues()
+      console.log(moduleParameter)
       this.updateAudioParam(baseValue, audioContext.currentTime)
       this.updateAudioParam(this.getValueToAttackTo(), attackTime + audioContext.currentTime, 'linear')
       this.updateAudioParam(sustainLevel, decayTime + attackTime + audioContext.currentTime, 'linear')
@@ -212,7 +213,7 @@ export default class Envelope extends React.Component {
   
   render () {
     return (
-      <div>Envelope</div>
+      null
     )
   }
 }

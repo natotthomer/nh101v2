@@ -40,7 +40,6 @@ export default class VCA extends React.Component {
 
     return (
       <React.Fragment>
-        VCA
         <Envelope param={this.amplifier.gain} {...envelopeProps} />
         {this.renderChildren()}
       </React.Fragment>

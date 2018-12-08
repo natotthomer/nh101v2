@@ -359,7 +359,6 @@ export default class VCF extends React.Component {
     
     return (
       <React.Fragment>
-        VCF
         {this.renderChildren()}
       </React.Fragment>
     )

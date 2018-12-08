@@ -52,7 +52,6 @@ export default class VCO extends React.Component {
 
     return (
       <React.Fragment>
-        VCO
         {this.renderChildren()}
       </React.Fragment>
     )
