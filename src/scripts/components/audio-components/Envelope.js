@@ -143,6 +143,7 @@ export default class Envelope extends React.Component {
   }
 
   triggerEnvelope (prevProps) {
+    console.log(this.props)
     const { 
       audioContext, 
       currentKeys, 
@@ -174,7 +175,6 @@ export default class Envelope extends React.Component {
         releaseStageEnd: null
       })
       this.cancelScheduledValues()
-      console.log(moduleParameter)
       this.updateAudioParam(baseValue, audioContext.currentTime)
       this.updateAudioParam(this.getValueToAttackTo(), attackTime + audioContext.currentTime, 'linear')
       this.updateAudioParam(sustainLevel, decayTime + attackTime + audioContext.currentTime, 'linear')

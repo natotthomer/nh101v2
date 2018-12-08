@@ -6,7 +6,7 @@ import { updateVCO } from '../../actions/synth-actions'
 const mapStateToProps = ({ }) => ({})
 
 const mapDispatchToProps = dispatch => ({
-    updateVCO: data => dispatch(updateVCO(data))
+  updateVCO: data => dispatch(updateVCO(data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VCOInterface)

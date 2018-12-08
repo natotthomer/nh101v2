@@ -314,7 +314,6 @@ export default class VCF extends React.Component {
   //         }
   //         default: {
   //             this.filters.forEach(filter => {
-  //                 console.log(newValue)
   //                 filter.frequency.setValueAtTime(newValue, atTime)
   //             })
   //             break

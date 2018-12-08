@@ -6,7 +6,7 @@ import { updateVCF } from '../../actions/synth-actions'
 const mapStateToProps = ({  }) => ({})
 
 const mapDispatchToProps = dispatch => ({
-    updateVCF: data => dispatch(updateVCF(data))
+  updateVCF: data => dispatch(updateVCF(data))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(VCFInterface)
