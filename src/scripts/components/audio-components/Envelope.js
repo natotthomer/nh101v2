@@ -49,9 +49,9 @@ export default class Envelope extends React.Component {
 
   getValueToSustainTo () {
     const { moduleParameter } = this.props
-    const { sustainLevel } = moduleParameter
+    const { sustainLevel, baseValue } = moduleParameter
 
-    return this.getValueToAttackTo() * sustainLevel
+    return ((this.getValueToAttackTo() - baseValue) * sustainLevel) + baseValue
   }
 
   updateAttack () {
@@ -77,7 +77,8 @@ export default class Envelope extends React.Component {
   }
 
   updateDecay () {
-    const { triggerStartTime, audioContext, decayTime } = this.props
+    const { triggerStartTime, audioContext, moduleParameter } = this.props
+    const { decayTime } = moduleParameter
 
     if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
       const decayStageEnd = this.state.attackStageEnd + decayTime
@@ -124,6 +125,7 @@ export default class Envelope extends React.Component {
   updateRelease () {
     if (this.param.value > 0 && this.state.releaseStageEnd) {
       const { moduleParameter, audioContext } = this.props
+      const { releaseTime, baseValue } = moduleParameter
       
       const timeSinceSustainStageEnded = audioContext.currentTime - this.state.sustainStageEnd
       const newRemainingReleaseTime = releaseTime - timeSinceSustainStageEnded
