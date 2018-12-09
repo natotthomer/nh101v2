@@ -5,6 +5,7 @@ export default class Envelope extends React.Component {
     super(props)
 
     this.param = this.props.param
+    this.audioContext = this.props.audioContext
     
     this.updateAudioParam = this.updateAudioParam.bind(this)
     this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
@@ -55,10 +56,10 @@ export default class Envelope extends React.Component {
   }
 
   updateAttack () {
-    const { triggerStartTime, audioContext, attackTime, decayTime } = this.props
+    const { gateStartTime, audioContext, attackTime, decayTime } = this.props
 
-    if (triggerStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
-      const timeSinceTrigger = audioContext.currentTime - triggerStartTime
+    if (gateStartTime && (audioContext.currentTime < this.state.attackStageEnd)) {
+      const timeSinceTrigger = audioContext.currentTime - gateStartTime
       const newRemainingAttackTime = attackTime - timeSinceTrigger
       
       let attackStageEnd = audioContext.currentTime + newRemainingAttackTime
@@ -77,17 +78,17 @@ export default class Envelope extends React.Component {
   }
 
   updateDecay () {
-    const { triggerStartTime, audioContext, moduleParameter } = this.props
+    const { gateStartTime, audioContext, moduleParameter } = this.props
     const { decayTime } = moduleParameter
 
-    if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
+    if (gateStartTime && audioContext.currentTime < this.state.attackStageEnd) {
       const decayStageEnd = this.state.attackStageEnd + decayTime
           
       this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
       this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
       this.setState({ decayStageEnd })
-    } else if (triggerStartTime && (audioContext.currentTime < this.state.decayStageEnd) && (audioContext.currentTime > this.state.attackStageEnd)) {
+    } else if (gateStartTime && (audioContext.currentTime < this.state.decayStageEnd) && (audioContext.currentTime > this.state.attackStageEnd)) {
       const timeSinceAttackStageEnded = audioContext.currentTime - this.state.attackStageEnd
       const newRemainingDecayTime = decayTime - timeSinceAttackStageEnded
 
@@ -105,19 +106,19 @@ export default class Envelope extends React.Component {
   }
 
   updateSustain () {
-    const { triggerStartTime, audioContext, decayTime } = this.props
-    if (triggerStartTime && audioContext.currentTime < this.state.attackStageEnd) {
+    const { gateStartTime, audioContext, decayTime } = this.props
+    if (gateStartTime && audioContext.currentTime < this.state.attackStageEnd) {
       const decayStageEnd = this.state.attackStageEnd + decayTime
           
       this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
       this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
       this.setState({ decayStageEnd })
-    } else if (triggerStartTime && audioContext.currentTime < this.state.decayStageEnd) {
+    } else if (gateStartTime && audioContext.currentTime < this.state.decayStageEnd) {
       this.param.cancelScheduledValues(audioContext.currentTime)
       this.param.setValueAtTime(this.param.value, audioContext.currentTime)
       this.updateAudioParam(this.getValueToSustainTo(), this.state.decayStageEnd, 'linear')
-    } else if (triggerStartTime) {
+    } else if (gateStartTime) {
       this.updateAudioParam(this.getValueToSustainTo())
     }
   }
@@ -144,6 +145,36 @@ export default class Envelope extends React.Component {
     }
   }
 
+  recalibrateEnvelope () {
+    if (this.props.currentKeys.length > 0) {
+      const { gateStartTime, attackTime, decayTime, moduleParameter } = this.props
+      const { attackStageEnd, decayStageEnd, releaseStageEnd, sustainStageEnd } = this.state
+      // console.log(this.props, this.state)
+      
+      console.log(this.props)
+      const timeSinceTrigger = this.audioContext.currentTime - gateStartTime
+
+      if (attackStageEnd > this.audioContext.currentTime) {
+        const newRemainingAttackTime = attackTime - timeSinceTrigger
+
+        let attackStageEnd = this.audioContext.currentTime + newRemainingAttackTime
+        let decayStageEnd = attackStageEnd + decayTime
+
+        console.log(attackStageEnd, decayStageEnd)
+        
+        this.cancelScheduledValues()
+        this.updateAudioParam(moduleParameter.baseValue)
+        if (attackStageEnd < this.audioContext.currentTime) {
+          attackStageEnd = this.audioContext.currentTime
+          decayStageEnd = this.audioContext.currentTime + decayTime
+        }
+        this.updateAudioParam(this.getValueToAttackTo(), attackStageEnd, 'linear')
+        this.setState({ attackStageEnd, decayStageEnd })
+        this.updateAudioParam(this.getValueToSustainTo(), decayStageEnd, 'linear')
+      }
+    }
+  }
+
   triggerEnvelope (prevProps) {
     const { 
       audioContext, 
@@ -154,11 +185,8 @@ export default class Envelope extends React.Component {
     const {
       attackTime, 
       decayTime,
-      sustainLevel,
       releaseTime,
       baseValue,
-      range,
-      envelopeAmount
     } = moduleParameter
     const currentKey = currentKeys[currentKeys.length - 1]
     const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
@@ -193,6 +221,7 @@ export default class Envelope extends React.Component {
   }
 
   updateAudioParam (newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
+    // console.log(newValue, atTime)
     switch (slopeType) {
       case 'exponential': {
         // Will break if `newValue` is 0 and slopeType is `exponential` (needs to

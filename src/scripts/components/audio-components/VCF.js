@@ -25,6 +25,16 @@ export default class VCF extends React.Component {
     buildCanvas(this.filter.frequency, 'filter-chart')
   }
 
+  componentDidUpdate (prevProps, nextProps) {
+    if (prevProps.moduleParameters.frequency.baseValue !== this.props.moduleParameters.frequency.baseValue) {
+      this.filter.frequency.setValueAtTime(this.props.moduleParameters.frequency.baseValue, this.audioContext.currentTime)
+
+      if (prevProps.currentKeys.length > 0) {
+        this.envelope.recalibrateEnvelope()
+      }
+    }
+  }
+
   // constructor (props) {
   //     super(props)
 
@@ -363,12 +373,16 @@ export default class VCF extends React.Component {
       audioContext: this.audioContext,
       currentKeys: this.props.currentKeys,
       moduleParameter: this.props.moduleParameters.frequency,
-      retrigger: this.props.retrigger
+      retrigger: this.props.retrigger,
+      gateStartTime: this.props.gateStartTime
     }
     
     return (
       <React.Fragment>
-        <Envelope param={this.filter.frequency} {...envelopeProps} />
+        <Envelope 
+          param={this.filter.frequency} 
+          {...envelopeProps}
+          ref={envelope => (this.envelope = envelope)} />
         {this.renderChildren()}
       </React.Fragment>
     )

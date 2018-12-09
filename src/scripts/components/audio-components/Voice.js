@@ -14,13 +14,15 @@ export default class Voice extends Component {
         audioContext: audioContext,
         currentKeys: currentKeys,
         moduleParameters: synth.vca,
-        retrigger: synth.retrigger
+        retrigger: synth.retrigger,
+        gateStartTime: synth.gateStartTime
       },
       vcfProps: {
         audioContext: audioContext,
         currentKeys: currentKeys,
         moduleParameters: synth.vcf,
-        retrigger: synth.retrigger
+        retrigger: synth.retrigger,
+        gateStartTime: synth.gateStartTime
       },
       vcoProps: synth.vcos.map(vcoData => ({ 
         audioContext: audioContext,
