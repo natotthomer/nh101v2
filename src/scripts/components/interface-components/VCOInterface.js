@@ -13,7 +13,9 @@ const VCOInterface = props => {
       max: 8,
       step: 1,
       valueType: 'integer',
-      parameter: 'oscillatorOctave'
+      parameter: 'oscillatorOctave',
+      value: props.oscillatorOctave,
+      id: props.id
     },
     detune: {
       title: 'detune',
@@ -21,7 +23,9 @@ const VCOInterface = props => {
       max: 1.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'oscillatorDetune'
+      parameter: 'oscillatorDetune',
+      value: props.oscillatorDetune,
+      id: props.id
     },
     gain: {
       title: 'gain',
@@ -29,22 +33,26 @@ const VCOInterface = props => {
       max: 1.0,
       step: 0.001,
       valueType: 'float',
-      parameter: 'oscillatorGain'
+      parameter: 'oscillatorGain',
+      value: props.oscillatorGain,
+      id: props.id
     },
     waveform: {
       title: 'waveform',
       options: WAVEFORMS,
       valueType: 'string',
-      parameter: 'oscillatorWaveform'
+      parameter: 'oscillatorWaveform',
+      value: props.oscillatorWaveform,
+      id: props.id
     }
   }
   
   return (
     <div className="module-controls-column">
-      <Range {...props.vco} {...inputSettings.octave} handleChange={props.updateVCO} />
-      <Range {...props.vco} {...inputSettings.detune} handleChange={props.updateVCO} />
-      <Dropdown {...props.vco} {...inputSettings.waveform} handleChange={props.updateVCO} />
-      <Range {...props.vco} {...inputSettings.gain} handleChange={props.updateVCO} />
+      <Range {...inputSettings.octave} handleChange={props.updateVCO} />
+      <Range {...inputSettings.detune} handleChange={props.updateVCO} />
+      <Dropdown {...inputSettings.waveform} handleChange={props.updateVCO} />
+      <Range {...inputSettings.gain} handleChange={props.updateVCO} />
     </div>
   )
 }

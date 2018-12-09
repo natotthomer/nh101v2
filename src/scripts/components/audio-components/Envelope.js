@@ -26,7 +26,6 @@ export default class Envelope extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    // console.log(this.props.moduleParameter.attackTime, prevProps.moduleParameter.attackTime)
     this.triggerEnvelope(prevProps)
     // These are checking whether the values are changing while the envelope is in 
     // process, and therefore whether the current rates of change need to change

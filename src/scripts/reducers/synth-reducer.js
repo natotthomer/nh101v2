@@ -59,12 +59,24 @@ const _nulLSynth = {
 const SynthReducer = (state = _nulLSynth, action) => {
   switch (action.type) {
     case UPDATE_VCO: {
-      const vcos = [...state.vcos]
-      const vco = Object.assign({}, vcos[action.data.id])
-      vco[action.data.parameter] = action.data.value
-      vcos[action.data.id] = vco
-
-      return Object.assign({}, state, { vcos })
+      console.log(action.data.value)
+      
+      return {
+        ...state,
+        vcos: [
+          ...state.vcos.map((vco, idx) => {
+            console.log(action.data.id)
+            if (idx === action.data.id) {
+              console.log('poo')
+              return {
+                ...state.vcos[idx],
+                [action.data.parameter]: action.data.value
+              }
+            }
+            return vco
+          })
+        ]
+      }
     }
     case UPDATE_VCF: {
       return {

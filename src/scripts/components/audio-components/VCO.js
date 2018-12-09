@@ -22,23 +22,27 @@ export default class VCO extends React.Component {
     this.oscillator.frequency.value = 1000
 
     this.amplifier = this.audioContext.createGain()
-    this.amplifier.gain.value = 0.5
+    this.amplifier.gain.value = this.props.moduleParameters.oscillatorGain
 
     this.oscillator.connect(this.amplifier)
     this.amplifier.connect(this.props.parentNode)
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const currentKey = this.props.currentKeys[this.props.currentKeys.length - 1]
+    const { currentKeys, moduleParameters } = this.props
+    const currentKey = currentKeys[currentKeys.length - 1]
     const indexOfKey = REGISTERED_KEYS.indexOf(currentKey)
     if (indexOfKey >= 0) {
-      const { oscillatorDetune, oscillatorOctave, oscillatorWaveform } = this.props.moduleParameters
+      const { oscillatorDetune, oscillatorOctave, oscillatorWaveform } = moduleParameters
       const noteNumber = indexOfKey + (12 * oscillatorOctave)
       const newValue = calculateOscillatorFrequency(noteNumber, oscillatorDetune)
       this.oscillator.frequency.setValueAtTime(newValue, this.audioContext.currentTime)
       this.oscillator.type = oscillatorWaveform
+    } else if (moduleParameters.oscillatorGain !== prevProps.moduleParameters.oscillatorGain) {
+      this.amplifier.gain.setValueAtTime(moduleParameters.oscillatorGain, this.audioContext.currentTime)
     }
   }
+
 
   renderChildren () {
     return React.Children.map(this.props.children, child => {
