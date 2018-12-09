@@ -48,7 +48,9 @@ const _nulLSynth = {
   echo: {
     echoVolume: 0.0,
     echoFeedback: 0.0,
-    echoTime: 0.5
+    echoTime: 0.5,
+    echoLFOSpeed: 0.5,
+    echoLFOAmount: 0.0
   },
   controller: 'keyboard',
   currentKey: null,

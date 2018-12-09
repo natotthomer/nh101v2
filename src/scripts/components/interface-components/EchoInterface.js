@@ -3,7 +3,7 @@ import React from 'react'
 import Range from '../input/Range'
 
 const VCAInterface = props => {
-  const { echoTime, echoFeedback, echoVolume } = props.echo
+  const { echoTime, echoFeedback, echoVolume, echoLFOSpeed, echoLFOAmount } = props.echo
 
 
   const inputSettings = {
@@ -19,7 +19,7 @@ const VCAInterface = props => {
     echoFeedback: {
       title: 'Feedback',
       min: 0.000,
-      max: 10.0,
+      max: 1.0,
       step: 0.001,
       valueType: 'float',
       parameter: 'echoFeedback',
@@ -33,6 +33,24 @@ const VCAInterface = props => {
       valueType: 'float',
       parameter: 'echoVolume',
       value: echoVolume
+    },
+    echoLFOSpeed: {
+      title: 'LFO Speed',
+      min: 0.001,
+      max: 1.0,
+      step: 0.001,
+      valueType: 'float',
+      parameter: 'echoLFOSpeed',
+      value: echoLFOSpeed
+    },
+    echoLFOAmount: {
+      title: 'LFO Amount',
+      min: 0.0,
+      max: 0.1,
+      step: 0.001,
+      valueType: 'float',
+      parameter: 'echoLFOAmount',
+      value: echoLFOAmount
     }
   }
   
@@ -42,6 +60,8 @@ const VCAInterface = props => {
         <Range {...inputSettings.echoTime} handleChange={props.updateEcho} />
         <Range {...inputSettings.echoFeedback} handleChange={props.updateEcho} />
         <Range {...inputSettings.echoVolume} handleChange={props.updateEcho} />
+        <Range {...inputSettings.echoLFOSpeed} handleChange={props.updateEcho} />
+        <Range {...inputSettings.echoLFOAmount} handleChange={props.updateEcho} />
       </div>
 
     </React.Fragment>

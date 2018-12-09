@@ -11,10 +11,12 @@ export default class Echo extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { echoFeedback, echoTime, echoVolume } = this.props.moduleParameters
+    const { echoFeedback, echoTime, echoVolume, echoLFOSpeed, echoLFOAmount } = this.props.moduleParameters
     this.echoVolume.gain.setValueAtTime(echoVolume, this.audioContext.currentTime)
-    this.feedback.gain.setValueAtTime(echoFeedback, this.audioContext.currentTime)
+    this.echoFeedback.gain.setValueAtTime(echoFeedback, this.audioContext.currentTime)
     this.echo.delayTime.setValueAtTime(echoTime, this.audioContext.currentTime)
+    this.echoLFO.frequency.setValueAtTime(echoLFOSpeed, this.audioContext.currentTime)
+    this.echoLFOAmount.gain.setValueAtTime(echoLFOAmount, this.audioContext.currentTime)
   }
 
   setUpEcho () {
@@ -22,22 +24,29 @@ export default class Echo extends React.Component {
     this.audioContext = audioContext
 
     this.output = this.audioContext.createGain()
+    this.echo = this.audioContext.createDelay(10.0) // argument is maxDelayTime
     this.echoVolume = this.audioContext.createGain()
+    this.echoFeedback = this.audioContext.createGain()
+    this.echoLFO = this.audioContext.createOscillator()
+    this.echoLFOAmount = this.audioContext.createGain()
 
     this.echoVolume.gain.value = moduleParameters.echoVolume
-
-    this.echo = this.audioContext.createDelay(10.0)
     this.echo.delayTime.value = moduleParameters.echoTime
+    this.echoFeedback.gain.value = moduleParameters.echoFeedback
+    this.echoLFO.frequency.value = moduleParameters.echoLFOSpeed
+    this.echoLFOAmount.gain.value = moduleParameters.echoLFOAmount
 
-    this.feedback = this.audioContext.createGain()
-    this.feedback.gain.value = moduleParameters.echoFeedback
+    this.echoLFO.start()
     
-    this.echo.connect(this.feedback)
-    this.feedback.connect(this.echo)
-
+    this.echoLFO.connect(this.echoLFOAmount)
+    this.echoLFOAmount.connect(this.echo.delayTime)
+    this.echo.connect(this.echoFeedback)
+    this.echoFeedback.connect(this.echo)
     this.output.connect(this.echo)
     this.echo.connect(this.echoVolume)
     this.echoVolume.connect(this.output)
+
+
 
     this.output.connect(parentNode)
   }
