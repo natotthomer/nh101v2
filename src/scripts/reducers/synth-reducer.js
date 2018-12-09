@@ -1,5 +1,5 @@
 import {
-  UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, UPDATE_GATE_START_TIME, 
+  UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, 
   UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO
 } from '../constants/synth-constants'
 
@@ -54,7 +54,6 @@ const _nulLSynth = {
   },
   controller: 'keyboard',
   currentKey: null,
-  gateStartTime: null,
   retrigger: true
 }
 
@@ -103,11 +102,6 @@ const SynthReducer = (state = _nulLSynth, action) => {
           }
         }
       }
-    }
-    case UPDATE_GATE_START_TIME: {
-      const gateStartTime = action.data.value
-      
-      return Object.assign({}, state, { gateStartTime })
     }
     case UPDATE_CURRENT_KEY: {
       const currentKey = action.data.value

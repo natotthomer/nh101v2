@@ -7,7 +7,7 @@ import Echo from './Echo'
 
 export default class Voice extends Component {
   render () {
-    const { audioContext, currentKeys, synth } = this.props
+    const { audioContext, currentKeys, synth, gateStartTime } = this.props
     
     const childrenProps = {
       vcaProps: { 
@@ -15,14 +15,14 @@ export default class Voice extends Component {
         currentKeys: currentKeys,
         moduleParameters: synth.vca,
         retrigger: synth.retrigger,
-        gateStartTime: synth.gateStartTime
+        gateStartTime: gateStartTime
       },
       vcfProps: {
         audioContext: audioContext,
         currentKeys: currentKeys,
         moduleParameters: synth.vcf,
         retrigger: synth.retrigger,
-        gateStartTime: synth.gateStartTime
+        gateStartTime: gateStartTime
       },
       vcoProps: synth.vcos.map(vcoData => ({ 
         audioContext: audioContext,

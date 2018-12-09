@@ -1,9 +1,10 @@
 import {
-  KEY_DOWN, KEY_UP
+  KEY_DOWN, KEY_UP, UPDATE_GATE_START_TIME
 } from '../constants/keyboard-constants'
 
 const _nullKeyboard = {
-  currentKeys: []
+  currentKeys: [],
+  gateStartTime: null,
 }
   
 const KeyboardReducer = (state = _nullKeyboard, action) => {
@@ -18,6 +19,11 @@ const KeyboardReducer = (state = _nullKeyboard, action) => {
       const indexOfKey = state.currentKeys.indexOf(action.key)
       currentKeys.splice(indexOfKey, 1)
       return Object.assign({}, state, { currentKeys })
+    }
+    case UPDATE_GATE_START_TIME: {
+      const gateStartTime = action.data.value
+      
+      return Object.assign({}, state, { gateStartTime })
     }
     default:
       return state

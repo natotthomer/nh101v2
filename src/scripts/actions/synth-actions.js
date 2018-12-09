@@ -1,5 +1,5 @@
 import { 
-  UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, UPDATE_GATE_START_TIME, 
+  UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, 
   UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO
 } from '../constants/synth-constants'
 
@@ -15,11 +15,6 @@ export const updateVCF = data => dispatch => dispatch({
 
 export const updateVCA = data => dispatch => dispatch({
   type: UPDATE_VCA,
-  data
-})
-
-export const updateGateStartTime = data => dispatch => dispatch({
-  type: UPDATE_GATE_START_TIME,
   data
 })
 
