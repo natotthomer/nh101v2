@@ -19,7 +19,6 @@ export default class VCA extends React.Component {
   }
 
   setUpAmplifier () {
-    console.log(this.props)
     this.audioContext = this.props.audioContext
     this.amplifier = this.audioContext.createGain()
     this.amplifier.gain.value = 0

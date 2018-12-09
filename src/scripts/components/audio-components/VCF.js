@@ -15,7 +15,6 @@ export default class VCF extends React.Component {
   }
 
   setUpFilter () {
-    console.log(this.props)
     this.audioContext = this.props.audioContext
     this.filter = this.audioContext.createBiquadFilter()
     this.filter.frequency.value = this.props.moduleParameters.frequency.baseValue

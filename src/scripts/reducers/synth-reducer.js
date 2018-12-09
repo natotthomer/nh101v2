@@ -67,16 +67,28 @@ const SynthReducer = (state = _nulLSynth, action) => {
       return Object.assign({}, state, { vcos })
     }
     case UPDATE_VCF: {
-      const vcf = {...state.vcf}
-      vcf[action.data.audioParam][action.data.parameter] = action.data.value
-
-      return Object.assign({}, state, { vcf })
+      return {
+        ...state,
+        vcf: {
+          ...state.vcf,
+          [action.data.audioParam]: {
+            ...state.vcf[action.data.audioParam],
+            [action.data.parameter]: action.data.value
+          }
+        }
+      }
     }
     case UPDATE_VCA: {
-      const vca = {...state.vca}
-      vca[action.data.audioParam][action.data.parameter] = action.data.value
-      
-      return Object.assign({}, state, { vca })
+      return {
+        ...state,
+        vca: {
+          ...state.vca,
+          [action.data.audioParam]: {
+            ...state.vca[action.data.audioParam],
+            [action.data.parameter]: action.data.value
+          }
+        }
+      }
     }
     case UPDATE_GATE_START_TIME: {
       const gateStartTime = action.data.value
@@ -94,7 +106,7 @@ const SynthReducer = (state = _nulLSynth, action) => {
       return Object.assign({}, state, { retrigger })
     }
     case UPDATE_ECHO: {
-      const { echo } = state
+      const echo = {...state.echo}
       echo[action.data.parameter] = action.data.value
       return Object.assign({}, state, { echo: {...echo} })
     }
