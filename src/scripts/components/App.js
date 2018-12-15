@@ -11,7 +11,7 @@ export default class App extends Component {
       <React.Fragment>
         <Head />
         <SynthEngineContainer audioContext={audioContext} />
-        <ComputerKeyboardContainer />
+        <ComputerKeyboardContainer audioContext={audioContext} />
       </React.Fragment>
     )
   }

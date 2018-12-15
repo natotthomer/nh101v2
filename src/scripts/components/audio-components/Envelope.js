@@ -149,9 +149,6 @@ export default class Envelope extends React.Component {
     if (this.props.currentKeys.length > 0) {
       const { gateStartTime, attackTime, decayTime, moduleParameter } = this.props
       const { attackStageEnd, decayStageEnd, releaseStageEnd, sustainStageEnd } = this.state
-      // console.log(this.props, this.state)
-      
-      console.log(this.props)
       const timeSinceTrigger = this.audioContext.currentTime - gateStartTime
 
       if (attackStageEnd > this.audioContext.currentTime) {
@@ -159,8 +156,6 @@ export default class Envelope extends React.Component {
 
         let attackStageEnd = this.audioContext.currentTime + newRemainingAttackTime
         let decayStageEnd = attackStageEnd + decayTime
-
-        console.log(attackStageEnd, decayStageEnd)
         
         this.cancelScheduledValues()
         this.updateAudioParam(moduleParameter.baseValue)
@@ -221,7 +216,6 @@ export default class Envelope extends React.Component {
   }
 
   updateAudioParam (newValue, atTime=this.props.audioContext.currentTime, slopeType=null) {
-    // console.log(newValue, atTime)
     switch (slopeType) {
       case 'exponential': {
         // Will break if `newValue` is 0 and slopeType is `exponential` (needs to

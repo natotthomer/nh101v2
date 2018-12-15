@@ -50,7 +50,8 @@ const _nulLSynth = {
     echoFeedback: 0.0,
     echoTime: 0.5,
     echoLFOSpeed: 0.5,
-    echoLFOAmount: 0.0
+    echoLFOAmount: 0.0,
+    echoLPFFrequency: 1000
   },
   controller: 'keyboard',
   currentKey: null,
@@ -60,15 +61,11 @@ const _nulLSynth = {
 const SynthReducer = (state = _nulLSynth, action) => {
   switch (action.type) {
     case UPDATE_VCO: {
-      console.log(action.data.value)
-      
       return {
         ...state,
         vcos: [
           ...state.vcos.map((vco, idx) => {
-            console.log(action.data.id)
             if (idx === action.data.id) {
-              console.log('poo')
               return {
                 ...state.vcos[idx],
                 [action.data.parameter]: action.data.value

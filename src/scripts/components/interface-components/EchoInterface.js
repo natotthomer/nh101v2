@@ -3,7 +3,7 @@ import React from 'react'
 import Range from '../input/Range'
 
 const VCAInterface = props => {
-  const { echoTime, echoFeedback, echoVolume, echoLFOSpeed, echoLFOAmount } = props.echo
+  const { echoTime, echoFeedback, echoVolume, echoLFOSpeed, echoLFOAmount, echoLPFFrequency } = props.echo
 
 
   const inputSettings = {
@@ -51,6 +51,15 @@ const VCAInterface = props => {
       valueType: 'float',
       parameter: 'echoLFOAmount',
       value: echoLFOAmount
+    },
+    echoLPFFrequency: {
+      title: 'LPF Cutoff',
+      min: 100,
+      max: 2000,
+      step: 0.001,
+      valueType: 'float',
+      parameter: 'echoLPFFrequency',
+      value: echoLPFFrequency
     }
   }
   
@@ -62,6 +71,7 @@ const VCAInterface = props => {
         <Range {...inputSettings.echoVolume} handleChange={props.updateEcho} />
         <Range {...inputSettings.echoLFOSpeed} handleChange={props.updateEcho} />
         <Range {...inputSettings.echoLFOAmount} handleChange={props.updateEcho} />
+        <Range {...inputSettings.echoLPFFrequency} handleChange={props.updateEcho} />
       </div>
 
     </React.Fragment>
