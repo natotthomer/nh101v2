@@ -1,6 +1,6 @@
 import {
   UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, 
-  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO
+  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO, RESPONSE_TYPES
 } from '../constants/synth-constants'
 
 const _nulLSynth = {
@@ -27,7 +27,8 @@ const _nulLSynth = {
       sustainLevel: 0.5,
       releaseTime: 0.3,
       envelopeAmount: 1.0,
-      range: [20, 20000]
+      range: [20, 20000],
+      envelopeResponseType: RESPONSE_TYPES[0]
     },
     Q: {
       baseValue: 1.0,
@@ -36,13 +37,14 @@ const _nulLSynth = {
   },
   vca: {
     gain: {
-      baseValue: 0.0,
+      baseValue: 0.000001,
       attackTime: 1.0,
       decayTime: 1.0,
       sustainLevel: 0.5,
       releaseTime: 0.3,
       envelopeAmount: 1.0,
-      range: [0.0, 1.0]
+      range: [0.0, 1.0],
+      envelopeResponseType: RESPONSE_TYPES[0]
     }
   },
   echo: {

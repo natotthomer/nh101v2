@@ -3,8 +3,16 @@ import React from 'react'
 import EnvelopeInterface from './EnvelopeInterface'
 import Range from '../input/Range'
 
+import { RESPONSE_TYPES } from '../../constants/synth-constants'
+
 const VCAInterface = props => {
-  const { attackTime, decayTime, sustainLevel, releaseTime } = props.vca.gain
+  const { 
+    attackTime, 
+    decayTime, 
+    sustainLevel, 
+    releaseTime,
+    envelopeResponseType
+  } = props.vca.gain
 
   const inputSettings = {
     attackTime: {
@@ -46,6 +54,14 @@ const VCAInterface = props => {
       audioParam: 'gain',
       parameter: 'releaseTime',
       value: releaseTime
+    },
+    envelopeResponseType: {
+      title: 'Response',
+      options: RESPONSE_TYPES,
+      valueType: 'string',
+      parameter: 'envelopeResponseType',
+      value: envelopeResponseType,
+      audioParam: 'gain'
     }
   }
   
@@ -58,7 +74,8 @@ const VCAInterface = props => {
           attackTime={Object.assign({}, inputSettings.attackTime)}
           decayTime={Object.assign({}, inputSettings.decayTime)}
           sustainLevel={Object.assign({}, inputSettings.sustainLevel)}
-          releaseTime={Object.assign({}, inputSettings.releaseTime)} />
+          releaseTime={Object.assign({}, inputSettings.releaseTime)}
+          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)} />
       </div>
     </React.Fragment>
   )

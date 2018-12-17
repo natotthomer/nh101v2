@@ -48,3 +48,36 @@ export const handleGenericControlChange = (props, value) => {
   
   props.handleChange(data)
 }
+
+export const makeLogarithmicSlope = (startValue, endValue) => {
+  // yValues should map between the initial value and the final value rather than just between 0 and 1
+
+  // It also needs to know whether to reverse the values (if descending)
+  const yValues = new Float32Array(4096)
+  const results = new Float32Array(4096)
+  const startAndEndValuesInAscendingOrder = startValue < endValue ? [startValue, endValue] : [endValue, startValue]
+  for (let i = 0; i < yValues.length; i++) {
+    let newYValue
+    if (i === 0) {
+      newYValue = 0
+    } else if (i === yValues.length - 1) {
+      newYValue = 1
+    } else {
+      newYValue = (Math.log((i / yValues.length) + ((1 / 100) * (2 / 3))) / 5) + 1
+    }
+    yValues[i] = newYValue
+  }
+
+
+  for (let i = 0; i < results.length; i++) {
+    let newValue = ((startAndEndValuesInAscendingOrder[1] - startAndEndValuesInAscendingOrder[0]) * yValues[i]) + startAndEndValuesInAscendingOrder[0]
+
+    results[i] = newValue
+  }
+
+  if (endValue < startValue) {
+    results.reverse()
+  }
+  
+  return results
+}

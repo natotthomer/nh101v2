@@ -3,8 +3,18 @@ import React from 'react'
 import EnvelopeInterface from './EnvelopeInterface'
 import Range from '../input/Range'
 
+import { RESPONSE_TYPES } from '../../constants/synth-constants'
+
 const VCFInterface = props => {
-  const { attackTime, decayTime, sustainLevel, releaseTime, baseValue, envelopeAmount } = props.vcf.frequency
+  const { 
+    attackTime, 
+    decayTime, 
+    sustainLevel, 
+    releaseTime, 
+    baseValue, 
+    envelopeAmount,
+    envelopeResponseType
+  } = props.vcf.frequency
   
   const inputSettings = {
     cutoff: {
@@ -76,6 +86,14 @@ const VCFInterface = props => {
       audioParam: 'frequency',
       parameter: 'releaseTime',
       value: releaseTime
+    },
+    envelopeResponseType: {
+      title: 'Response',
+      options: RESPONSE_TYPES,
+      valueType: 'string',
+      parameter: 'envelopeResponseType',
+      value: envelopeResponseType,
+      audioParam: 'frequency'
     }
   }
   
@@ -88,7 +106,8 @@ const VCFInterface = props => {
           attackTime={Object.assign({}, inputSettings.attackTime)}
           decayTime={Object.assign({}, inputSettings.decayTime)}
           sustainLevel={Object.assign({}, inputSettings.sustainLevel)}
-          releaseTime={Object.assign({}, inputSettings.releaseTime)} />
+          releaseTime={Object.assign({}, inputSettings.releaseTime)}
+          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)} />
       </div>
       <div className="module-controls-column">
         <Range {...inputSettings.cutoff} handleChange={props.updateVCF} />

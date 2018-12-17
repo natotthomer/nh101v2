@@ -1,16 +1,18 @@
 import React from 'react'
 
 import Range from '../input/Range'
+import Dropdown from '../input/Dropdown'
 
-export default class EnvelopeInterface extends React.Component {
-  render () {
-    return (
-      <div className="module-controls-column">
-        <Range {...this.props.attackTime} handleChange={this.props.handleChange} />
-        <Range {...this.props.decayTime} handleChange={this.props.handleChange} />
-        <Range {...this.props.sustainLevel} handleChange={this.props.handleChange} />
-        <Range {...this.props.releaseTime} handleChange={this.props.handleChange} />
-      </div>
-    )
-  }
+const EnvelopeInterface = props => {
+  return (
+    <div className="module-controls-column">
+      <Range {...props.attackTime} handleChange={props.handleChange} />
+      <Range {...props.decayTime} handleChange={props.handleChange} />
+      <Range {...props.sustainLevel} handleChange={props.handleChange} />
+      <Range {...props.releaseTime} handleChange={props.handleChange} />
+      <Dropdown {...props.envelopeResponseType} handleChange={props.handleChange} />
+    </div>
+  )
 }
+
+export default EnvelopeInterface

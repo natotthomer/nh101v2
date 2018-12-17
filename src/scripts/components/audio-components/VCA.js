@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Envelope from './Envelope'
+import Envelope from './Envelope/Envelope'
 import { buildCanvas } from '../../synth-charts'
 
 export default class VCA extends React.Component {
