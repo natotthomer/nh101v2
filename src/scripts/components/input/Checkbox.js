@@ -2,7 +2,7 @@ import React from 'react'
 
 import { handleGenericControlChange } from '../../utils'
 
-export default class Range extends React.Component {
+export default class Checkbox extends React.Component {
   constructor (props) {
     super(props)
 
@@ -10,20 +10,18 @@ export default class Range extends React.Component {
   }
 
   handleChange (e) {
-    handleGenericControlChange(this.props, e.target.value)
+    console.log(this.props)
+    handleGenericControlChange(this.props, e.target.checked)
   }
   
   render () {
     return (
-      <div className='input-range'>
-        <div className='input-range-title'>
+      <div className='input-checkbox'>
+        <div className='input-checkbox-title'>
           {this.props.title}
         </div>
-        <input type='range'
-          min={this.props.min}
-          max={this.props.max}
-          step={this.props.step}
-          value={this.props.value}
+        <input type='checkbox'
+          checked={this.props.value}
           onChange={this.handleChange} />
         <div>{this.props.value}</div>
       </div>
