@@ -133,10 +133,11 @@ export default class Envelope extends React.Component {
   scheduleReleaseStage () {
     const { baseValue, releaseTime, envelopeResponseType } = this.props.moduleParameter
     
+    
     this.updateAudioParam(
       baseValue, 
       { 
-        slopeType: 'linear',
+        slopeType: envelopeResponseType,
         startValue: this.param.value,
         stageLength: releaseTime,
         startTime: this.audioContext.currentTime
