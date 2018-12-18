@@ -10,7 +10,6 @@ export default class Checkbox extends React.Component {
   }
 
   handleChange (e) {
-    console.log(this.props)
     handleGenericControlChange(this.props, e.target.checked)
   }
   
