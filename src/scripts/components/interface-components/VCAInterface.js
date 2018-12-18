@@ -1,8 +1,6 @@
 import React from 'react'
 
 import EnvelopeInterface from './EnvelopeInterface'
-import Range from '../input/Range'
-
 import { RESPONSE_TYPES } from '../../constants/synth-constants'
 
 const VCAInterface = props => {
@@ -11,7 +9,8 @@ const VCAInterface = props => {
     decayTime, 
     sustainLevel, 
     releaseTime,
-    envelopeResponseType
+    envelopeResponseType,
+    envelopeRetrigger
   } = props.vca.gain
 
   const inputSettings = {
@@ -62,6 +61,13 @@ const VCAInterface = props => {
       parameter: 'envelopeResponseType',
       value: envelopeResponseType,
       audioParam: 'gain'
+    },
+    envelopeRetrigger: {
+      title: 'Retrigger',
+      valueType: 'boolean',
+      parameter: 'envelopeRetrigger',
+      value: envelopeRetrigger,
+      audioParam: 'gain'
     }
   }
   
@@ -75,7 +81,8 @@ const VCAInterface = props => {
           decayTime={Object.assign({}, inputSettings.decayTime)}
           sustainLevel={Object.assign({}, inputSettings.sustainLevel)}
           releaseTime={Object.assign({}, inputSettings.releaseTime)}
-          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)} />
+          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)}
+          envelopeRetrigger={Object.assign({}, inputSettings.envelopeRetrigger)} />
       </div>
     </React.Fragment>
   )

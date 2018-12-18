@@ -143,7 +143,6 @@ export default class VCF extends React.Component {
       audioContext: this.audioContext,
       currentKeys: this.props.currentKeys,
       moduleParameter: this.props.moduleParameters.frequency,
-      retrigger: this.props.retrigger,
       gateStartTime: this.props.gateStartTime
     }
     

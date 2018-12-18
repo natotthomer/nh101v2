@@ -44,6 +44,9 @@ export const handleGenericControlChange = (props, value) => {
     case 'string': {
       data.value = value
     }
+    case 'boolean': {
+      data.value = value
+    }
   }
   
   props.handleChange(data)

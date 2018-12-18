@@ -13,7 +13,8 @@ const VCFInterface = props => {
     releaseTime, 
     baseValue, 
     envelopeAmount,
-    envelopeResponseType
+    envelopeResponseType,
+    envelopeRetrigger
   } = props.vcf.frequency
   
   const inputSettings = {
@@ -94,6 +95,13 @@ const VCFInterface = props => {
       parameter: 'envelopeResponseType',
       value: envelopeResponseType,
       audioParam: 'frequency'
+    },
+    envelopeRetrigger: {
+      title: 'Retrigger',
+      valueType: 'boolean',
+      parameter: 'envelopeRetrigger',
+      value: envelopeRetrigger,
+      audioParam: 'frequency'
     }
   }
   
@@ -107,7 +115,8 @@ const VCFInterface = props => {
           decayTime={Object.assign({}, inputSettings.decayTime)}
           sustainLevel={Object.assign({}, inputSettings.sustainLevel)}
           releaseTime={Object.assign({}, inputSettings.releaseTime)}
-          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)} />
+          envelopeResponseType={Object.assign({}, inputSettings.envelopeResponseType)}
+          envelopeRetrigger={Object.assign({}, inputSettings.envelopeRetrigger)} />
       </div>
       <div className="module-controls-column">
         <Range {...inputSettings.cutoff} handleChange={props.updateVCF} />

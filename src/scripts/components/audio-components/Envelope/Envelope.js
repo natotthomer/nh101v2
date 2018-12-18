@@ -32,16 +32,14 @@ export default class Envelope extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     // need state handling for retrigger-per-adsr
-    const { currentKeys, retrigger } = this.props
-
-
+    const { currentKeys } = this.props
     const currentKey = currentKeys[currentKeys.length - 1]
     const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
 
-    if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !retrigger) {
+    if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.moduleParameter.envelopeRetrigger) {
       // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
       // new key events, we just want to continue the envelope from where it left off
-    } else if (currentKeys.length > 0 && currentKey !== prevKey) {
+    } else if ((currentKeys.length > 0 && currentKey !== prevKey)) {
       this.triggerEnvelope(prevProps)
     }  else if (currentKey !== prevKey && currentKey === undefined) {
       this.releaseEnvelope()
@@ -60,7 +58,7 @@ export default class Envelope extends React.Component {
       sustainStageEnd: null,
       releaseStageEnd: null
     })
-    this.resetAtValue()
+    this.resetToBaseValue()
     this.scheduleAttackStage()
     this.scheduleDecayStage()
   }
@@ -91,8 +89,9 @@ export default class Envelope extends React.Component {
   }
 
   resetToBaseValue () {
+    console.log('hi')
     this.cancelScheduledValues(0)
-    this.updateAudioParam(this.param.baseValue)
+    this.updateAudioParam(this.props.moduleParameter.baseValue)
   }
 
   resetAtValue () {
@@ -137,7 +136,7 @@ export default class Envelope extends React.Component {
     this.updateAudioParam(
       baseValue, 
       { 
-        slopeType: envelopeResponseType,
+        slopeType: 'linear',
         startValue: this.param.value,
         stageLength: releaseTime,
         startTime: this.audioContext.currentTime

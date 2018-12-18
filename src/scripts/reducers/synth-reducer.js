@@ -1,6 +1,6 @@
 import {
   UPDATE_VCO, UPDATE_VCF, UPDATE_VCA, 
-  UPDATE_CURRENT_KEY, UPDATE_RETRIGGER, UPDATE_ECHO, RESPONSE_TYPES
+  UPDATE_CURRENT_KEY, UPDATE_ECHO, RESPONSE_TYPES
 } from '../constants/synth-constants'
 
 const _nulLSynth = {
@@ -28,7 +28,8 @@ const _nulLSynth = {
       releaseTime: 0.3,
       envelopeAmount: 1.0,
       range: [20, 20000],
-      envelopeResponseType: RESPONSE_TYPES[0]
+      envelopeResponseType: RESPONSE_TYPES[0],
+      envelopeRetrigger: true
     },
     Q: {
       baseValue: 1.0,
@@ -44,7 +45,8 @@ const _nulLSynth = {
       releaseTime: 0.3,
       envelopeAmount: 1.0,
       range: [0.0, 1.0],
-      envelopeResponseType: RESPONSE_TYPES[0]
+      envelopeResponseType: RESPONSE_TYPES[0],
+      envelopeRetrigger: true
     }
   },
   echo: {
@@ -57,7 +59,6 @@ const _nulLSynth = {
   },
   controller: 'keyboard',
   currentKey: null,
-  retrigger: true
 }
 
 const SynthReducer = (state = _nulLSynth, action) => {
@@ -106,11 +107,6 @@ const SynthReducer = (state = _nulLSynth, action) => {
       const currentKey = action.data.value
       
       return Object.assign({}, state, currentKey)
-    }
-    case UPDATE_RETRIGGER: {
-      const retrigger = !state.trigger
-
-      return Object.assign({}, state, { retrigger })
     }
     case UPDATE_ECHO: {
       const echo = {...state.echo}

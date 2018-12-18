@@ -27,8 +27,8 @@ export const buildCanvas = (parameter, elementID) => {
 
   var xVal = 0;
   var yVal = 100; 
-  var updateInterval = 1;
-  var dataLength = 2000; // number of dataPoints visible at any point
+  var updateInterval = 2;
+  var dataLength = 500; // number of dataPoints visible at any point
 
   var updateChart = function (count) {
     count = count || 1;

@@ -42,8 +42,7 @@ export default class VCA extends React.Component {
     const envelopeProps = {
       audioContext: this.audioContext,
       currentKeys: this.props.currentKeys,
-      moduleParameter: this.props.moduleParameters.gain,
-      retrigger: this.props.retrigger
+      moduleParameter: this.props.moduleParameters.gain
     }
 
     return (
