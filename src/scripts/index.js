@@ -8,12 +8,12 @@ import Store from './store'
 import '../styles/index.scss'
 
 const initializeApp = () => {
-    ReactDOM.render(
-        <Provider store={Store()}>
-            <AppContainer />
-        </Provider>,
-        document.getElementById('root')
-    )
+  ReactDOM.render(
+    <Provider store={Store()}>
+      <AppContainer />
+    </Provider>,
+    document.getElementById('root')
+  )
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp)

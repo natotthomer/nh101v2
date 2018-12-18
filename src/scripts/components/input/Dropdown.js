@@ -1,20 +1,32 @@
 import React from 'react'
 
-const Range = props => {
-    const options = props.options.map((option, idx) => {
-        return <option key={idx} value={option}>{option}</option>
+import { handleGenericControlChange } from '../../utils'
+
+export default class Dropdown extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.handleChange = this.handleChange.bind(this)
+  }
+
+  handleChange (e) {
+    handleGenericControlChange(this.props, e.target.value)
+  }
+
+  render () {
+    const options = this.props.options.map((option, idx) => {
+      return <option key={idx} value={option}>{option}</option>
     })
     
     return (
-        <div className='input-dropdown'>
-            <div className='input-dropdown-title'>
-                {props.title}
-            </div>
-            <select onChange={props.handleChange} value={props.value}>
-                {options}
-            </select>
+      <div className='input-dropdown'>
+        <div className='input-dropdown-title'>
+          {this.props.title}
         </div>
+        <select onChange={this.handleChange} value={this.props.value}>
+          {options}
+        </select>
+      </div>
     )
+  }
 }
-
-export default Range
