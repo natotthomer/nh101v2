@@ -26,12 +26,8 @@ export default class VCF extends React.Component {
   }
 
   componentDidUpdate (prevProps, nextProps) {
-    if (prevProps.moduleParameters.frequency.baseValue !== this.props.moduleParameters.frequency.baseValue) {
-      this.filter.frequency.setValueAtTime(this.props.moduleParameters.frequency.baseValue, this.audioContext.currentTime)
-
-      if (prevProps.currentKeys.length > 0) {
-        this.envelope.recalibrateEnvelope()
-      }
+    if (prevProps.moduleParameters.Q.baseValue !== this.props.moduleParameters.Q.baseValue) {
+      this.filter.Q.setValueAtTime(this.props.moduleParameters.Q.baseValue, this.audioContext.currentTime)
     }
   }
 
@@ -42,6 +38,8 @@ export default class VCF extends React.Component {
       })
     })
   }
+
+
 
   render () {
     const envelopeProps = {

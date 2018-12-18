@@ -20,6 +20,7 @@ export default class Envelope extends React.Component {
     this.scheduleAttackStage = this.scheduleAttackStage.bind(this)
     this.scheduleDecayStage = this.scheduleDecayStage.bind(this)
     this.scheduleReleaseStage = this.scheduleReleaseStage.bind(this)
+    this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this)
 
     this.state = {
       time: 0.0,
@@ -32,7 +33,7 @@ export default class Envelope extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     // need state handling for retrigger-per-adsr
-    const { currentKeys } = this.props
+    const { currentKeys, moduleParameter } = this.props
     const currentKey = currentKeys[currentKeys.length - 1]
     const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
 
@@ -40,13 +41,19 @@ export default class Envelope extends React.Component {
       // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
       // new key events, we just want to continue the envelope from where it left off
     } else if ((currentKeys.length > 0 && currentKey !== prevKey)) {
-      this.triggerEnvelope(prevProps)
+      this.triggerEnvelope()
     }  else if (currentKey !== prevKey && currentKey === undefined) {
       this.releaseEnvelope()
+    } else if (moduleParameter.baseValue !== prevProps.moduleParameter.baseValue) {
+      if (currentKeys.length > 0) {   
+        this.recalibrateEnvelope(prevProps)
+      } else if (this.state.releaseStageEnd <= this.audioContext.currentTime) {
+        this.param.setValueAtTime(moduleParameter.baseValue, this.audioContext.currentTime)
+      }
     }
   }
 
-  triggerEnvelope (prevProps) {
+  triggerEnvelope () {
     const {
       attackTime, 
       decayTime,
@@ -61,6 +68,38 @@ export default class Envelope extends React.Component {
     this.resetToBaseValue()
     this.scheduleAttackStage()
     this.scheduleDecayStage()
+  }
+
+  updateAudioParam (newValue, options = {}) {
+    if (newValue === 0) {
+      newValue = 0.0001
+    }
+
+    const stageEndsAt = options.startTime + options.stageLength
+
+    switch (options.slopeType) {
+      case 'exponential': {
+        this.param.exponentialRampToValueAtTime(newValue, stageEndsAt)
+        break
+      }
+      case 'linear': {
+        this.param.linearRampToValueAtTime(newValue, stageEndsAt)
+        break
+      }
+      case 'logarithmic': {
+        const slope = makeLogarithmicSlope(options.startValue, newValue)
+        this.param.setValueCurveAtTime(slope, options.startTime, options.stageLength)
+        break
+      }
+      default: {
+        this.param.setValueAtTime(newValue, this.audioContext.currentTime)
+        break
+      }
+    }
+  }
+
+  cancelScheduledValues (atTime = this.audioContext.currentTime) {
+    this.param.cancelScheduledValues(atTime)
   }
 
   releaseEnvelope () {
@@ -89,7 +128,6 @@ export default class Envelope extends React.Component {
   }
 
   resetToBaseValue () {
-    console.log('hi')
     this.cancelScheduledValues(0)
     this.updateAudioParam(this.props.moduleParameter.baseValue)
   }
@@ -133,7 +171,6 @@ export default class Envelope extends React.Component {
   scheduleReleaseStage () {
     const { baseValue, releaseTime, envelopeResponseType } = this.props.moduleParameter
     
-    
     this.updateAudioParam(
       baseValue, 
       { 
@@ -145,40 +182,9 @@ export default class Envelope extends React.Component {
     )
   }
 
-  
-
-  cancelScheduledValues (atTime = this.audioContext.currentTime) {
-    this.param.cancelScheduledValues(atTime)
+  recalibrateEnvelope (prevProps) {
+    
   }
-
-  updateAudioParam (newValue, options = {}) {
-    if (newValue === 0) {
-      newValue = 0.0001
-    }
-
-    const stageEndsAt = options.startTime + options.stageLength
-
-    switch (options.slopeType) {
-      case 'exponential': {
-        this.param.exponentialRampToValueAtTime(newValue, stageEndsAt)
-        break
-      }
-      case 'linear': {
-        this.param.linearRampToValueAtTime(newValue, stageEndsAt)
-        break
-      }
-      case 'logarithmic': {
-        const slope = makeLogarithmicSlope(options.startValue, newValue)
-        this.param.setValueCurveAtTime(slope, options.startTime, options.stageLength)
-        break
-      }
-      default: {
-        this.param.setValueAtTime(newValue, this.audioContext.currentTime)
-        break
-      }
-    }
-  }
-
   
   render () {
     return (
