@@ -22,8 +22,11 @@ export default class VCF extends React.Component {
   }
 
   componentDidMount () {
-    buildCanvas(this.filter.frequency, 'filter-chart')
-  }
+    buildCanvas('filter-chart', {
+      param: this.filter.frequency,
+      moduleName: 'VCF',
+      paramName: 'frequency'
+    })  }
 
   componentDidUpdate (prevProps, nextProps) {
     if (prevProps.moduleParameters.Q.baseValue !== this.props.moduleParameters.Q.baseValue) {
@@ -38,8 +41,6 @@ export default class VCF extends React.Component {
       })
     })
   }
-
-
 
   render () {
     const envelopeProps = {

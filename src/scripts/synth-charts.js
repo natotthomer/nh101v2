@@ -1,4 +1,10 @@
-export const buildCanvas = (parameter, elementID) => {
+// options = {
+//   param: AudioParam,
+//   moduleName: string,
+//   paramName: string
+// }
+
+export const buildCanvas = (elementID, options) => {
   CanvasJS.addColorSet("greenShades", [//colorSet Array
     "#9F4F0F",
     "#008080",
@@ -10,7 +16,7 @@ export const buildCanvas = (parameter, elementID) => {
   var dps = []; // dataPoints
   var chart = new CanvasJS.Chart(elementID, {
     title: {
-      text: "Amplifier gain over time"
+      text: `${options.moduleName} ${options.paramName} over time`
     },
     colorSet: "greenShades",
     axisY: {
@@ -34,7 +40,7 @@ export const buildCanvas = (parameter, elementID) => {
     count = count || 1;
 
     for (var j = 0; j < count; j++) {
-      yVal = parameter.value
+      yVal = options.param.value
       dps.push({
         x: xVal,
         y: yVal

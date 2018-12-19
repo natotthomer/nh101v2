@@ -15,7 +15,11 @@ export default class VCA extends React.Component {
   }
   
   componentDidMount () {
-    buildCanvas(this.amplifier.gain, 'amp-chart')
+    buildCanvas('amp-chart', {
+      param: this.amplifier.gain,
+      moduleName: 'VCA',
+      paramName: 'gain'
+    })
   }
 
   setUpAmplifier () {
