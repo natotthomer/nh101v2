@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { makeLogarithmicSlope } from '../../../utils'
+import { makeLogarithmicSlope, calculateAttackFrequency, calculateSustainValue } from '../../../utils'
 
 
 export default class Envelope extends React.Component {
@@ -11,6 +11,8 @@ export default class Envelope extends React.Component {
     this.audioContext = this.props.audioContext
     
     this.triggerEnvelope = this.triggerEnvelope.bind(this)
+    // this.retriggerEnvelope = this.retriggerEnvelope.bind(this)
+    this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this)
     this.updateAudioParam = this.updateAudioParam.bind(this)
     this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
     this.getValueToAttackTo = this.getValueToAttackTo.bind(this)
@@ -20,7 +22,6 @@ export default class Envelope extends React.Component {
     this.scheduleAttackStage = this.scheduleAttackStage.bind(this)
     this.scheduleDecayStage = this.scheduleDecayStage.bind(this)
     this.scheduleReleaseStage = this.scheduleReleaseStage.bind(this)
-    this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this)
 
     this.state = {
       time: 0.0,
@@ -32,32 +33,109 @@ export default class Envelope extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    // need state handling for retrigger-per-adsr
-    const { currentKeys, moduleParameter } = this.props
+    const { currentKeys, parameterValues } = this.props
     const currentKey = currentKeys[currentKeys.length - 1]
+    const prevKeys = prevProps.currentKeys
     const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
 
-    if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.moduleParameter.envelopeRetrigger) {
-      // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
-      // new key events, we just want to continue the envelope from where it left off
-    } else if ((currentKeys.length > 0 && currentKey !== prevKey)) {
+    // condition declaration
+    const prevKeysAndCurrentKeysAreNotTheSame = !(currentKeys.every((key, idx) => key === prevKeys[idx]) && currentKeys.length === prevKeys.length)
+    const firstNote = currentKey !== prevKey && [undefined, null].includes(prevKey)
+    console.log(firstNote || parameterValues.envelopeRetrigger)
+    const hasEnvelopeBeenTriggered = (prevKeysAndCurrentKeysAreNotTheSame) && (firstNote || parameterValues.envelopeRetrigger)
+    const hasKeyReleased = currentKey !== prevKey && [undefined, null].includes(prevKey)
+    const hasParameterValuesChanged = Object.keys(prevProps.parameterValues).some(key => prevProps.parameterValues[key] !== this.props.parameterValues[key])
+
+    if (hasEnvelopeBeenTriggered) {
+      console.log(currentKey, prevKey)
+      console.log('hi')
       this.triggerEnvelope()
-    }  else if (currentKey !== prevKey && currentKey === undefined) {
+    } else if (hasKeyReleased) {
       this.releaseEnvelope()
-    } else if (moduleParameter.baseValue !== prevProps.moduleParameter.baseValue) {
-      if (currentKeys.length > 0) {   
-        this.recalibrateEnvelope(prevProps)
-      } else if (this.state.releaseStageEnd <= this.audioContext.currentTime) {
-        this.param.setValueAtTime(moduleParameter.baseValue, this.audioContext.currentTime)
-      }
-    }
+    } else if (hasParameterValuesChanged) {
+      this.recalibrateEnvelope(prevProps)
+
+    } 
+
+    // if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.parameterValues.envelopeRetrigger) {
+    //   // if retrigger mode is off, then we don't want to retrigger the envelope when we receive 
+    //   // new key events, we just want to continue the envelope from where it left off
+    // } else if ((currentKeys.length > 0 && currentKey !== prevKey)) {
+    //   console.log('first else if')
+    //   this.triggerEnvelope()
+    // }  else if (currentKey !== prevKey && currentKey === undefined) {
+    //   console.log('second else if')
+    //   this.releaseEnvelope()
+    // } else if (parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+    //   console.log('third')
+    //   if (currentKeys.length > 0) {   
+    //     console.log('third first')
+    //     this.recalibrateEnvelope(prevProps)
+    //   } else if (this.state.releaseStageEnd <= this.audioContext.currentTime) {
+    //     console.log('third second')
+    //     this.param.setValueAtTime(parameterValues.baseValue, this.audioContext.currentTime)
+    //   }
+    // } else if (this.audioContext.currentTime < this.state.attackStageEnd) {
+    //   console.log('fourth') 
+    //   const { gateStartTime } = this.props
+    //   const { 
+    //     attackTime, 
+    //     decayTime, 
+    //     sustainLevel,
+    //     cutoffFrequency,
+    //     envelopeAmount,
+    //     envelopeResponseType
+    //   } = this.props.parameterValues
+
+    //   const timeSinceTrigger = this.audioContext.currentTime - gateStartTime
+    //   const newRemainingAttackTime = attackTime - timeSinceTrigger
+    //   const attackFrequency = this.getValueToAttackTo()
+    //   const sustainFrequency = this.getValueToDecayTo()
+      
+    //   let attackStageEnd = this.audioContext.currentTime + newRemainingAttackTime
+    //   let decayStageEnd = attackStageEnd + decayTime
+      
+    //   this.resetAtValue()
+    //   this.updateAudioParam(this.param.value)
+
+    //   if (attackStageEnd < this.audioContext.currentTime) {
+    //     console.log('fourth inner')
+    //     attackStageEnd = this.audioContext.currentTime
+    //     decayStageEnd = this.audioContext.currentTime + decayTime
+    //   }
+
+    //   this.updateAudioParam(attackFrequency, {
+    //     slopeType: envelopeResponseType,
+    //     startValue: this.param.value,
+    //     stageLength: attackTime,
+    //     startTime: this.audioContext.currentTime
+    //   })
+    //   this.updateAudioParam(sustainFrequency, {
+    //     slopeType: envelopeResponseType,
+    //     startValue: attackFrequency,
+    //     stageLength: decayTime,
+    //     startTime: this.audioContext.currentTime
+    //   })
+      
+    //   // this.updateFrequency(attackFrequency, attackStageEnd, 'linear')
+    //   this.setState({ attackStageEnd, decayStageEnd })
+    //   // this.updateFrequency(sustainFrequency, decayStageEnd, 'linear')
+    // }
+    
+    // (parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount || 
+    //   parameterValues.attackTime !== prevProps.parameterValues.attackTime ||
+    //   parameterValues.decayTime !== prevProps.parameterValues.decayTime ||
+    //   parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel ||
+    //   parameterValues.releaseTime !== prevProps.parameterValues.releaseTime) {
+        
+    //   }
   }
 
   triggerEnvelope () {
     const {
       attackTime, 
       decayTime,
-    } = this.props.moduleParameter
+    } = this.props.parameterValues
 
     this.setState({
       attackStageEnd: this.audioContext.currentTime + attackTime, 
@@ -106,7 +184,7 @@ export default class Envelope extends React.Component {
     this.setState({ 
       attackStageEnd: null, 
       decayStageEnd: null, 
-      releaseStageEnd: this.audioContext.currentTime + this.props.moduleParameter.releaseTime, 
+      releaseStageEnd: this.audioContext.currentTime + this.props.parameterValues.releaseTime, 
       sustainStageEnd: this.audioContext.currentTime 
     })
     this.resetAtValue()
@@ -114,22 +192,22 @@ export default class Envelope extends React.Component {
   }
 
   getValueToAttackTo () {
-    const { moduleParameter } = this.props
-    const { range, baseValue, envelopeAmount } = moduleParameter
+    const { parameterValues } = this.props
+    const { range, baseValue, envelopeAmount } = parameterValues
 
     return ((range[1] - baseValue) * envelopeAmount) + baseValue
   }
 
   getValueToDecayTo () {
-    const { moduleParameter } = this.props
-    const { sustainLevel, baseValue } = moduleParameter
+    const { parameterValues } = this.props
+    const { sustainLevel, baseValue } = parameterValues
 
     return ((this.getValueToAttackTo() - baseValue) * sustainLevel) + baseValue
   }
 
   resetToBaseValue () {
     this.cancelScheduledValues(0)
-    this.updateAudioParam(this.props.moduleParameter.baseValue)
+    this.updateAudioParam(this.props.parameterValues.baseValue)
   }
 
   resetAtValue () {
@@ -139,7 +217,7 @@ export default class Envelope extends React.Component {
 
   scheduleAttackStage () {
     const valueToAttackTo = this.getValueToAttackTo()
-    const { attackTime, envelopeResponseType } = this.props.moduleParameter
+    const { attackTime, envelopeResponseType } = this.props.parameterValues
     
     this.updateAudioParam(
       valueToAttackTo,
@@ -155,7 +233,7 @@ export default class Envelope extends React.Component {
   scheduleDecayStage () {
     const valueToAttackTo = this.getValueToAttackTo()
     const valueToDecayTo = this.getValueToDecayTo()
-    const { attackTime, decayTime, envelopeResponseType } = this.props.moduleParameter
+    const { attackTime, decayTime, envelopeResponseType } = this.props.parameterValues
 
     this.updateAudioParam(
       valueToDecayTo, 
@@ -169,7 +247,7 @@ export default class Envelope extends React.Component {
   }
 
   scheduleReleaseStage () {
-    const { baseValue, releaseTime, envelopeResponseType } = this.props.moduleParameter
+    const { baseValue, releaseTime, envelopeResponseType } = this.props.parameterValues
     
     this.updateAudioParam(
       baseValue, 
@@ -183,12 +261,31 @@ export default class Envelope extends React.Component {
   }
 
   recalibrateEnvelope (prevProps) {
-    
+    if (this.props.gateStartTime === null && this.audioContext.currentTime < this.state.releaseStageEnd) {
+
+    } else if (this.audioContext.currentTime < this.state.attackStageEnd) {
+      
+    }
   }
   
   render () {
-    return (
-      null
-    )
+    return null
   }
 }
+
+
+
+// Q. What do I want?
+
+// A. I want a simple public API to initialize events and a private one that consists of the constituent parts to each type of event response
+
+// Q. What does that, roughly, look like?
+
+// A. - A series of helper methods:
+//      - initiateTrigger
+//      - initiateRelease
+//      - scheduleAttackStage
+//      - scheduleDecayStage
+//      - scheduleReleaseStage
+//      - recalibrateEnvelope
+//      - 

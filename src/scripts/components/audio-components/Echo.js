@@ -11,7 +11,7 @@ export default class Echo extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { echoFeedback, echoTime, echoVolume, echoLFOSpeed, echoLFOAmount, echoLPFFrequency } = this.props.moduleParameters
+    const { echoFeedback, echoTime, echoVolume, echoLFOSpeed, echoLFOAmount, echoLPFFrequency } = this.props.parameterValues
     this.echoVolume.gain.setValueAtTime(echoVolume, this.audioContext.currentTime)
     this.echoFeedback.gain.setValueAtTime(echoFeedback, this.audioContext.currentTime)
     this.echo.delayTime.setValueAtTime(echoTime, this.audioContext.currentTime)
@@ -21,7 +21,7 @@ export default class Echo extends React.Component {
   }
 
   setUpEcho () {
-    const { audioContext, moduleParameters, parentNode } = this.props
+    const { audioContext, parameterValues, parentNode } = this.props
     this.audioContext = audioContext
 
     this.output = this.audioContext.createGain()
@@ -32,12 +32,12 @@ export default class Echo extends React.Component {
     this.echoLFOAmount = this.audioContext.createGain()
     this.echoLPF = this.audioContext.createBiquadFilter()
 
-    this.echoVolume.gain.value = moduleParameters.echoVolume
-    this.echo.delayTime.value = moduleParameters.echoTime
-    this.echoFeedback.gain.value = moduleParameters.echoFeedback
-    this.echoLFO.frequency.value = moduleParameters.echoLFOSpeed
-    this.echoLFOAmount.gain.value = moduleParameters.echoLFOAmount
-    this.echoLPF.frequency.value = moduleParameters.echoLPFFrequency
+    this.echoVolume.gain.value = parameterValues.echoVolume
+    this.echo.delayTime.value = parameterValues.echoTime
+    this.echoFeedback.gain.value = parameterValues.echoFeedback
+    this.echoLFO.frequency.value = parameterValues.echoLFOSpeed
+    this.echoLFOAmount.gain.value = parameterValues.echoLFOAmount
+    this.echoLPF.frequency.value = parameterValues.echoLPFFrequency
 
     this.echoLFO.start()
     

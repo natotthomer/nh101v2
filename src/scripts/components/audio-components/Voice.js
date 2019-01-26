@@ -12,24 +12,24 @@ const Voice = props => {
     vcaProps: { 
       audioContext: audioContext,
       currentKeys: currentKeys,
-      moduleParameters: synth.vca,
+      parameterValues: synth.vca,
       gateStartTime: gateStartTime
     },
     vcfProps: {
       audioContext: audioContext,
       currentKeys: currentKeys,
-      moduleParameters: synth.vcf,
+      parameterValues: synth.vcf,
       gateStartTime: gateStartTime
     },
     vcoProps: synth.vcos.map(vcoData => ({ 
       audioContext: audioContext,
       currentKeys: currentKeys,
-      moduleParameters: vcoData 
+      parameterValues: vcoData 
     })),
     echoProps: {
       audioContext: audioContext,
       currentKeys: currentKeys,
-      moduleParameters: synth.echo
+      parameterValues: synth.echo
     }
   }
 

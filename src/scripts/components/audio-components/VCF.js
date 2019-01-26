@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Envelope from './Envelope/Envelope'
-import { calculateAttackFrequency, calculateSustainFrequency } from '../../utils'
+import { calculateAttackFrequency, calculateSustainGain } from '../../utils'
 import { buildCanvas } from '../../synth-charts'
 
 export default class VCF extends React.Component {
@@ -17,7 +17,7 @@ export default class VCF extends React.Component {
   setUpFilter () {
     this.audioContext = this.props.audioContext
     this.filter = this.audioContext.createBiquadFilter()
-    this.filter.frequency.value = this.props.moduleParameters.frequency.baseValue
+    this.filter.frequency.value = this.props.parameterValues.frequency.baseValue
     this.filter.connect(this.props.parentNode)
   }
 
@@ -29,8 +29,8 @@ export default class VCF extends React.Component {
     })  }
 
   componentDidUpdate (prevProps, nextProps) {
-    if (prevProps.moduleParameters.Q.baseValue !== this.props.moduleParameters.Q.baseValue) {
-      this.filter.Q.setValueAtTime(this.props.moduleParameters.Q.baseValue, this.audioContext.currentTime)
+    if (prevProps.parameterValues.Q.baseValue !== this.props.parameterValues.Q.baseValue) {
+      this.filter.Q.setValueAtTime(this.props.parameterValues.Q.baseValue, this.audioContext.currentTime)
     }
   }
 
@@ -46,7 +46,7 @@ export default class VCF extends React.Component {
     const envelopeProps = {
       audioContext: this.audioContext,
       currentKeys: this.props.currentKeys,
-      moduleParameter: this.props.moduleParameters.frequency,
+      parameterValues: this.props.parameterValues.frequency,
       gateStartTime: this.props.gateStartTime
     }
     

@@ -21,7 +21,7 @@ export const calculateAttackFrequency = (filterCutoff, filterEnvelopeAmount) => 
   return ((20000 - filterCutoff) * filterEnvelopeAmount) + filterCutoff
 }
 
-export const calculateSustainFrequency = (filterCutoff, filterEnvelopeAmount, filterSustainLevel) => {
+export const calculateSustainGain = (filterCutoff, filterEnvelopeAmount, filterSustainLevel) => {
   return calculateAttackFrequency(filterCutoff, filterEnvelopeAmount) * filterSustainLevel
 }
 
