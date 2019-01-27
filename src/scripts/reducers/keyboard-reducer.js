@@ -2,26 +2,26 @@ import {
   KEY_DOWN, KEY_UP, UPDATE_GATE_START_TIME
 } from '../constants/keyboard-constants'
 
-const _nullKeyboard = {
+const _keyboardBaseState = {
   currentKeys: [],
   gateStartTime: null,
 }
   
-const KeyboardReducer = (state = _nullKeyboard, action) => {
+const KeyboardReducer = (state = _keyboardBaseState, action) => {
   switch (action.type) {
     case KEY_DOWN: {
-      const currentKeys = [...state.currentKeys]
-      currentKeys.push(action.key)
-      return Object.assign({}, state, { currentKeys })
+      return {
+        ...state,
+        currentKeys: [...state.currentKeys, action.key]
+      }
     }
     case KEY_UP: {
-      const currentKeys = [...state.currentKeys]
-      const indexOfKey = state.currentKeys.indexOf(action.key)
-      currentKeys.splice(indexOfKey, 1)
-      return Object.assign({}, state, { currentKeys })
+      return {
+        ...state,
+        currentKeys: state.currentKeys.filter(key => key !== action.key)
+      }
     }
     case UPDATE_GATE_START_TIME: {
-      console.log(action.data.value)
       const gateStartTime = action.data.value
       
       return Object.assign({}, state, { gateStartTime })
@@ -30,6 +30,5 @@ const KeyboardReducer = (state = _nullKeyboard, action) => {
       return state
   }
 }
-  
+
 export default KeyboardReducer
-  

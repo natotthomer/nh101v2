@@ -3,7 +3,7 @@ import {
   UPDATE_CURRENT_KEY, UPDATE_ECHO, RESPONSE_TYPES
 } from '../constants/synth-constants'
 
-const _nulLSynth = {
+const _synthBaseState = {
   vcos: [
     {
       oscillatorOctave: 4,
@@ -61,22 +61,24 @@ const _nulLSynth = {
   currentKey: null,
 }
 
-const SynthReducer = (state = _nulLSynth, action) => {
+const SynthReducer = (state = _synthBaseState, action) => {
   switch (action.type) {
     case UPDATE_VCO: {
-      return {
-        ...state,
-        vcos: [
-          ...state.vcos.map((vco, idx) => {
-            if (idx === action.data.id) {
-              return {
-                ...state.vcos[idx],
-                [action.data.parameter]: action.data.value
+      return () => {
+        return {
+          ...state,
+          vcos: [
+            ...state.vcos.map((vco, idx) => {
+              if (idx === action.data.id) {
+                return {
+                  ...state.vcos[idx],
+                  [action.data.parameter]: action.data.value
+                }
               }
-            }
-            return vco
-          })
-        ]
+              return vco
+            })
+          ]
+        }
       }
     }
     case UPDATE_VCF: {

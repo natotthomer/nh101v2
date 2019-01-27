@@ -12,8 +12,10 @@ export default class ComputerKeyboard extends Component {
   }
 
   handleKeyDown (e) {
+    console.log(e)
     return debounce((event = e) => {
       if (this.props.currentKeys.indexOf(event.keyCode) < 0 && REGISTERED_KEYS.includes(event.keyCode)) {
+        console.log('yoooo')
         this.props.keyDown(event.keyCode)
         this.props.updateGateStartTime({ value: this.props.audioContext.currentTime })
       }
@@ -21,6 +23,7 @@ export default class ComputerKeyboard extends Component {
   }
 
   handleKeyUp (e) {
+    console.log(e)
     const isLastKey = this.props.currentKeys.includes(e.keyCode) && this.props.currentKeys.length === 1
     if (isLastKey && this.props.gateStartTime) {
       this.props.updateGateStartTime({ value: null })

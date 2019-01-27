@@ -11,7 +11,6 @@ export default class Envelope extends React.Component {
     this.audioContext = this.props.audioContext
     
     this.triggerEnvelope = this.triggerEnvelope.bind(this)
-    // this.retriggerEnvelope = this.retriggerEnvelope.bind(this)
     this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this)
     this.updateAudioParam = this.updateAudioParam.bind(this)
     this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
@@ -28,7 +27,8 @@ export default class Envelope extends React.Component {
       attackStageEnd: null,
       decayStageEnd: null,
       releaseStageEnd: null,
-      sustainStageEnd: null
+      sustainStageEnd: null,
+      triggered: false
     }
   }
 
@@ -41,20 +41,24 @@ export default class Envelope extends React.Component {
     // condition declaration
     const prevKeysAndCurrentKeysAreNotTheSame = !(currentKeys.every((key, idx) => key === prevKeys[idx]) && currentKeys.length === prevKeys.length)
     const firstNote = currentKey !== prevKey && [undefined, null].includes(prevKey)
-    console.log(firstNote || parameterValues.envelopeRetrigger)
-    const hasEnvelopeBeenTriggered = (prevKeysAndCurrentKeysAreNotTheSame) && (firstNote || parameterValues.envelopeRetrigger)
-    const hasKeyReleased = currentKey !== prevKey && [undefined, null].includes(prevKey)
+    console.log('firstNote', firstNote)
+    console.log(prevKeysAndCurrentKeysAreNotTheSame)
+    console.log(prevKeys, currentKeys)
+    const hasEnvelopeBeenTriggered = ((prevKeysAndCurrentKeysAreNotTheSame && parameterValues.envelopeRetrigger) || firstNote ) && currentKeys.length > 0
+    const hasKeyReleased = currentKey !== prevKey && [undefined, null].includes(currentKey)
+    
     const hasParameterValuesChanged = Object.keys(prevProps.parameterValues).some(key => prevProps.parameterValues[key] !== this.props.parameterValues[key])
 
-    if (hasEnvelopeBeenTriggered) {
-      console.log(currentKey, prevKey)
-      console.log('hi')
+    
+    if (hasEnvelopeBeenTriggered && !this.state.triggered) {
+      this.setState({ triggered: true })
       this.triggerEnvelope()
-    } else if (hasKeyReleased) {
+    } else if (hasKeyReleased && this.state.triggered) {
+      this.setState({ triggered: false })
+      console.log('release')
       this.releaseEnvelope()
     } else if (hasParameterValuesChanged) {
       this.recalibrateEnvelope(prevProps)
-
     } 
 
     // if (((currentKeys.length > 1) || (prevProps.currentKeys.includes(currentKey) && currentKeys.length === 1)) && !this.props.parameterValues.envelopeRetrigger) {
