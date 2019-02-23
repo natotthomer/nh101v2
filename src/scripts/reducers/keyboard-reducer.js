@@ -24,7 +24,10 @@ const KeyboardReducer = (state = _keyboardBaseState, action) => {
     case UPDATE_GATE_START_TIME: {
       const gateStartTime = action.data.value
       
-      return Object.assign({}, state, { gateStartTime })
+      return {
+        ...state,
+        gateStartTime
+      }
     }
     default:
       return state

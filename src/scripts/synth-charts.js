@@ -1,9 +1,3 @@
-// options = {
-//   param: AudioParam,
-//   moduleName: string,
-//   paramName: string
-// }
-
 export const buildCanvas = (elementID, options) => {
   CanvasJS.addColorSet("greenShades", [//colorSet Array
     "#9F4F0F",
@@ -33,7 +27,7 @@ export const buildCanvas = (elementID, options) => {
 
   var xVal = 0;
   var yVal = 100; 
-  var updateInterval = 2;
+  var updateInterval = 1;
   var dataLength = 500; // number of dataPoints visible at any point
 
   var updateChart = function (count) {
