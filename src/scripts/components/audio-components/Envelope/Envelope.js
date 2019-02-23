@@ -1,44 +1,43 @@
-import React from 'react'
+import React from 'react';
 
-import { makeLogarithmicSlope, calculateAttackFrequency, calculateSustainValue } from '../../../utils'
+import { makeLogarithmicSlope, calculateAttackFrequency, calculateSustainValue } from '../../../utils';
 
 
 export default class Envelope extends React.Component {
   constructor (props) {
-    super(props)
+    super(props);
 
-    this.param = this.props.param
-    this.audioContext = this.props.audioContext
-    
-    this.triggerEnvelope = this.triggerEnvelope.bind(this)
-    this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this)
-    this.updateAudioParam = this.updateAudioParam.bind(this)
-    this.cancelScheduledValues = this.cancelScheduledValues.bind(this)
-    this.getValueToAttackTo = this.getValueToAttackTo.bind(this)
-    this.getValueToDecayTo = this.getValueToDecayTo.bind(this)
-    this.resetAtValue = this.resetAtValue.bind(this)
-    this.resetToBaseValue = this.resetToBaseValue.bind(this)
-    this.scheduleAttackStage = this.scheduleAttackStage.bind(this)
-    this.scheduleDecayStage = this.scheduleDecayStage.bind(this)
-    this.scheduleReleaseStage = this.scheduleReleaseStage.bind(this)
-    this.setValueAtTime = this.setValueAtTime.bind(this)
+    this.param = this.props.param;
+    this.audioContext = this.props.audioContext;
+
+    this.triggerEnvelope = this.triggerEnvelope.bind(this);
+    this.recalibrateEnvelope = this.recalibrateEnvelope.bind(this);
+    this.updateAudioParam = this.updateAudioParam.bind(this);
+    this.cancelScheduledValues = this.cancelScheduledValues.bind(this);
+    this.getValueToAttackTo = this.getValueToAttackTo.bind(this);
+    this.getValueToDecayTo = this.getValueToDecayTo.bind(this);
+    this.resetAtValue = this.resetAtValue.bind(this);
+    this.resetToBaseValue = this.resetToBaseValue.bind(this);
+    this.scheduleAttackStage = this.scheduleAttackStage.bind(this);
+    this.scheduleDecayStage = this.scheduleDecayStage.bind(this);
+    this.scheduleReleaseStage = this.scheduleReleaseStage.bind(this);
+    this.setValueAtTime = this.setValueAtTime.bind(this);
 
     this.state = {
       time: 0.0,
       attackStageEnd: null,
       decayStageEnd: null,
       releaseStageEnd: null,
-      sustainStageEnd: null,
-      triggered: false
-    }
+      sustainStageEnd: null
+    };
   }
 
   shouldComponentUpdate (nextProps, nextState) {
     if (Object.keys(nextProps).every(key => nextProps[key] === this.props[key]) && Object.keys(nextState).every(key => nextState[key] === this.state[key])) {
-      return false
+      return false;
     }
 
-    return true
+    return true;
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -52,10 +51,10 @@ export default class Envelope extends React.Component {
     const firstNote = currentKey !== prevKey && [undefined, null].includes(prevKey)
     const hasEnvelopeBeenTriggered = ((prevKeysAndCurrentKeysAreNotTheSame && parameterValues.envelopeRetrigger) || firstNote ) && currentKeys.length > 0
     const hasKeyReleased = currentKey !== prevKey && [undefined, null].includes(currentKey)
-    
+
     const hasParameterValuesChanged = Object.keys(prevProps.parameterValues).some(key => prevProps.parameterValues[key] !== this.props.parameterValues[key])
 
-    
+
     if (hasEnvelopeBeenTriggered) {
       this.triggerEnvelope();
     } else if (hasKeyReleased) {
@@ -86,7 +85,7 @@ export default class Envelope extends React.Component {
     if (newValue === 0) {
       newValue = 0.0001;
     }
-    
+
     const stageEndsAt = options.startTime + options.stageLength;
 
     switch (options.slopeType) {
@@ -111,7 +110,7 @@ export default class Envelope extends React.Component {
   }
 
   setValueAtTime(newValue, atTime) {
-    this.param.setValue(newValue, atTime || this.audioContext.currentTime)
+    this.param.setValueAtTime(newValue, atTime || this.audioContext.currentTime)
   }
 
   cancelScheduledValues (atTime = 0) {
@@ -119,33 +118,37 @@ export default class Envelope extends React.Component {
   }
 
   releaseEnvelope () {
+    console.log('currenttime')
+    console.log(this.audioContext.currentTime)
+    console.log('currenttime + releasetime -- releasestageend')
+    console.log(this.audioContext.currentTime + this.props.parameterValues.releaseTime)
     this.setState({ 
       attackStageEnd: null, 
       decayStageEnd: null, 
       releaseStageEnd: this.audioContext.currentTime + this.props.parameterValues.releaseTime, 
       sustainStageEnd: this.audioContext.currentTime 
-    })
-    this.resetAtValue()
-    this.scheduleReleaseStage()
+    });
+    this.resetAtValue();
+    this.scheduleReleaseStage();
   }
 
   getValueToAttackTo () {
-    const { parameterValues } = this.props
-    const { range, baseValue, envelopeAmount } = parameterValues
+    const { parameterValues } = this.props;
+    const { range, baseValue, envelopeAmount } = parameterValues;
 
-    return ((range[1] - baseValue) * envelopeAmount) + baseValue
+    return ((range[1] - baseValue) * envelopeAmount) + baseValue;
   }
 
   getValueToDecayTo () {
-    const { parameterValues } = this.props
-    const { sustainLevel, baseValue } = parameterValues
+    const { parameterValues } = this.props;
+    const { sustainLevel, baseValue } = parameterValues;
 
-    return ((this.getValueToAttackTo() - baseValue) * sustainLevel) + baseValue
+    return ((this.getValueToAttackTo() - baseValue) * sustainLevel) + baseValue;
   }
 
   resetToBaseValue () {
-    this.cancelScheduledValues(0)
-    this.updateAudioParam(this.props.parameterValues.baseValue)
+    this.cancelScheduledValues(0);
+    this.updateAudioParam(this.props.parameterValues.baseValue);
   }
 
   resetAtValue (atTime = 0) {
@@ -154,10 +157,10 @@ export default class Envelope extends React.Component {
   }
 
   scheduleAttackStage (gateStartTime) {
-    const stageLength = gateStartTime ? this.audioContext.currentTime - gateStartTime : attackTime
+    const stageLength = gateStartTime ? this.audioContext.currentTime - gateStartTime : attackTime;
     const valueToAttackTo = this.getValueToAttackTo();
     const { attackTime, envelopeResponseType } = this.props.parameterValues;
-    
+
     this.updateAudioParam(
       valueToAttackTo,
       {
@@ -185,9 +188,9 @@ export default class Envelope extends React.Component {
     );
   }
 
-  scheduleReleaseStage () {
+  scheduleReleaseStage (gateEndTime) {
     const { baseValue, releaseTime, envelopeResponseType } = this.props.parameterValues;
-    
+
     this.updateAudioParam(
       baseValue, 
       { 
@@ -196,41 +199,99 @@ export default class Envelope extends React.Component {
         stageLength: releaseTime,
         startTime: this.audioContext.currentTime
       }
-    )
+    );
   }
 
   recalibrateEnvelope (prevProps) {
-    if (this.props.gateStartTime === null && this.audioContext.currentTime < this.state.releaseStageEnd) {
+    // console.log('props', this.props)
+    // console.log('state', this.state)
+    console.log(this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd)
+    console.log(this.state.releaseStageEnd, this.audioContext.currentTime)
+    if (this.props.gateStartTime === null && this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
 
     } else if (this.audioContext.currentTime < this.state.attackStageEnd) {
+      console.log('attack')
       if (this.props.parameterValues.attackTime !== prevProps.parameterValues.attackTime) {
         this.resetAtValue();  
         this.scheduleAttackStage();
         this.scheduleDecayStage();
       } else if (this.props.parameterValues.decayTime !== prevProps.parameterValues.decayTime) {
-        this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
+        this.param.cancelAndHoldAtTime(this.state.attackStageEnd);
+        this.param.setValueAtTime(this.getValueToAttackTo(), this.state.attackStageEnd);
         this.scheduleDecayStage();
       } else if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
-        this.param.cancelAndHoldAtTime(this.state.attackStageEnd)
+        this.param.setValueAtTime(this.getValueToAttackTo(), this.state.attackStageEnd);
         this.scheduleDecayStage();
       } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
-        this.param.cancelScheduledValues(0)
+        this.param.cancelAndHoldAtTime(0);
         this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
         this.scheduleAttackStage(this.props.gateStartTime);
         this.scheduleDecayStage();
       } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
-        this.param.cancelScheduledValues(0)
+        this.param.cancelScheduledValues(0);
         this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
         this.scheduleAttackStage(this.props.gateStartTime);
         this.scheduleDecayStage();
       }
-    } else if ((this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime < this.state.decayStageEnd) && (this.props.parameterValues.attackTime !== prevProps.parameterValues.attackTime || this.props.parameterValues.envelopeResponseType !== prevProps.parameterValues.envelopeResponseType)) {
-      this.resetAtValue();
-      this.scheduleDecayStage();
+    } else if (this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime < this.state.decayStageEnd) {
+      console.log('decay')
+      if (this.props.parameterValues.decayTime !== prevProps.parameterValues.decayTime) {
+        this.param.cancelAndHoldAtTime(0);
+        this.scheduleDecayStage();
+      } else if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
+        this.param.cancelAndHoldAtTime(0);
+        this.scheduleDecayStage();
+      } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
+        this.param.cancelAndHoldAtTime(0);
+        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
+        this.scheduleAttackStage(this.props.gateStartTime);
+        this.scheduleDecayStage();
+      } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+        this.param.cancelScheduledValues(0);
+        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
+        this.scheduleDecayStage();
+      }
+    } else if (this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime >= this.state.decayStageEnd && this.props.gateStartTime) {
+      console.log(sustain)
+      console.log('current')
+      console.log(this.audioContext.currentTime)
+      console.log('releasestageend')
+      console.log(this.state.releaseStageEnd)
+      console.log('gatestarttime')
+      console.log(this.props.gateStartTime)
+      if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
+        this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
+      } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
+        this.param.cancelAndHoldAtTime(0);
+        this.scheduleDecayStage();
+      } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+        this.param.cancelScheduledValues(0);
+        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
+        this.scheduleDecayStage();
+      }
+    } else if (this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
+      console.log('release')
+      if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
+        // this.
+        this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
+      } else if (this.props.parameterValues.releaseTime !== prevProps.parameterValues.releaseTime) {
+        console.log('asdfasdfasd')
+        this.param.cancelAndHoldAtTime(0);
+        this.scheduleReleaseStage(this.audioContext.currentTime);
+      } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
+        this.param.cancelAndHoldAtTime(0);
+        this.scheduleDecayStage();
+      } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+        this.param.cancelScheduledValues(0);
+        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
+        this.scheduleDecayStage();
+      }
+    } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+      this.setValueAtTime(this.props.parameterValues.baseValue, this.audioContext.currentTime);
     }
   }
-  
+
   render () {
-    return null
+    return null;
   }
 }
