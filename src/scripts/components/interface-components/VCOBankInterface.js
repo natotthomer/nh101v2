@@ -10,9 +10,9 @@ const VCOBankInterface = props => {
   });
   
   return (
-    <div>
+    <React.Fragment>
       {vcos}
-    </div>
+    </React.Fragment>
   );
 };
 
