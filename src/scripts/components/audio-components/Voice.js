@@ -7,9 +7,7 @@ import Echo from './Echo'
 
 const Voice = props => {
   const { audioContext, currentKeys, synth, gateStartTime } = props
-  
-  console.log(props)
-  
+    
   const childrenProps = {
     vcaProps: { 
       audioContext: audioContext,

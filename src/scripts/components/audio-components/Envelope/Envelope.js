@@ -273,8 +273,7 @@ export default class Envelope extends React.Component {
         this.scheduleDecayStage();
       } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
         this.param.cancelScheduledValues(0);
-        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
-        this.scheduleDecayStage();
+        this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
       }
     } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
       this.setValueAtTime(this.props.parameterValues.baseValue, this.audioContext.currentTime);

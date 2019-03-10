@@ -74,14 +74,11 @@ const SynthReducer = (state = _synthBaseState, action) => {
         ...state,
         vcos: [
           ...state.vcos.map((vco, idx) => {
-            console.log(vco)
             if (idx === action.data.id) {
-              const result = {
+              return {
                 ...state.vcos[idx],
                 [action.data.parameter]: action.data.value
               }
-              console.log(result)
-              return result
             }
             return vco
           })
