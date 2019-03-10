@@ -201,6 +201,14 @@ export default class Envelope extends React.Component {
   }
 
   recalibrateEnvelope (prevProps) {
+    // This is the heart of the envelope stage modulation system.
+
+    // There is a LOT of refactoring that can happen here, largely around:
+    //   a) the outrageous, unruly if-else statement
+    //   b) the inconsistent system for canceling, scheduling, and calculation of values/times, especially when
+    //      the changes occur during a stage affected by that change, such as changing the attack time DURING the
+    //      attack stage or changing the sustain level DURING the decay stage
+    //      * I can't quite figure out the WebAudio system for canceling and scheduling/rescheduling
     if (this.props.gateStartTime === null && this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
       if (this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
         if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
@@ -241,7 +249,6 @@ export default class Envelope extends React.Component {
         this.scheduleDecayStage();
       }
     } else if (this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime < this.state.decayStageEnd) {
-
       if (this.props.parameterValues.decayTime !== prevProps.parameterValues.decayTime) {
         this.param.cancelAndHoldAtTime(0);
         this.scheduleDecayStage();

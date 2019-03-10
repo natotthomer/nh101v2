@@ -17,6 +17,12 @@ const _synthBaseState = {
       oscillatorWaveform: 'sawtooth',
       oscillatorGain: 0.0,
       id: 1
+    }, {
+      oscillatorOctave: 4,
+      oscillatorDetune: 0,
+      oscillatorWaveform: 'sawtooth',
+      oscillatorGain: 0.0,
+      id: 2
     }
   ],
   vcf: {
@@ -64,21 +70,22 @@ const _synthBaseState = {
 const SynthReducer = (state = _synthBaseState, action) => {
   switch (action.type) {
     case UPDATE_VCO: {
-      return () => {
-        return {
-          ...state,
-          vcos: [
-            ...state.vcos.map((vco, idx) => {
-              if (idx === action.data.id) {
-                return {
-                  ...state.vcos[idx],
-                  [action.data.parameter]: action.data.value
-                }
+      return {
+        ...state,
+        vcos: [
+          ...state.vcos.map((vco, idx) => {
+            console.log(vco)
+            if (idx === action.data.id) {
+              const result = {
+                ...state.vcos[idx],
+                [action.data.parameter]: action.data.value
               }
-              return vco
-            })
-          ]
-        }
+              console.log(result)
+              return result
+            }
+            return vco
+          })
+        ]
       }
     }
     case UPDATE_VCF: {

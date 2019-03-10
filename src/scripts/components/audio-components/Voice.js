@@ -8,6 +8,8 @@ import Echo from './Echo'
 const Voice = props => {
   const { audioContext, currentKeys, synth, gateStartTime } = props
   
+  console.log(props)
+  
   const childrenProps = {
     vcaProps: { 
       audioContext: audioContext,
@@ -35,13 +37,14 @@ const Voice = props => {
 
   const { vcaProps, vcoProps, vcfProps, echoProps } = childrenProps
   
+  const vcos = vcoProps.map((vcoData, idx) => <VCO key={idx} {...vcoData} />)
+  
   return (
     <React.Fragment>
       <Echo {...echoProps} parentNode={audioContext.destination}>
         <VCA {...vcaProps}>
           <VCF {...vcfProps}>
-            <VCO {...vcoProps[0]} />
-            <VCO {...vcoProps[1]} />
+            {vcos}
           </VCF>
         </VCA>
       </Echo>
