@@ -118,10 +118,6 @@ export default class Envelope extends React.Component {
   }
 
   releaseEnvelope () {
-    console.log('currenttime')
-    console.log(this.audioContext.currentTime)
-    console.log('currenttime + releasetime -- releasestageend')
-    console.log(this.audioContext.currentTime + this.props.parameterValues.releaseTime)
     this.setState({ 
       attackStageEnd: null, 
       decayStageEnd: null, 
@@ -157,7 +153,9 @@ export default class Envelope extends React.Component {
   }
 
   scheduleAttackStage (gateStartTime) {
-    const stageLength = gateStartTime ? this.audioContext.currentTime - gateStartTime : attackTime;
+    // I don't remember whether I need the following line - it seems to work without using `stageLength`
+    // const stageLength = gateStartTime ? this.audioContext.currentTime - gateStartTime : attackTime;
+
     const valueToAttackTo = this.getValueToAttackTo();
     const { attackTime, envelopeResponseType } = this.props.parameterValues;
 
@@ -203,14 +201,23 @@ export default class Envelope extends React.Component {
   }
 
   recalibrateEnvelope (prevProps) {
-    // console.log('props', this.props)
-    // console.log('state', this.state)
-    console.log(this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd)
-    console.log(this.state.releaseStageEnd, this.audioContext.currentTime)
     if (this.props.gateStartTime === null && this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
-
+      if (this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
+        if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
+          this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
+        } else if (this.props.parameterValues.releaseTime !== prevProps.parameterValues.releaseTime) {
+          this.param.cancelAndHoldAtTime(0);
+          this.scheduleReleaseStage(this.audioContext.currentTime);
+        } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
+          this.param.cancelAndHoldAtTime(0);
+          this.scheduleDecayStage();
+        } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
+          this.param.cancelScheduledValues(0);
+          this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
+          this.scheduleDecayStage();
+        }
+      }
     } else if (this.audioContext.currentTime < this.state.attackStageEnd) {
-      console.log('attack')
       if (this.props.parameterValues.attackTime !== prevProps.parameterValues.attackTime) {
         this.resetAtValue();  
         this.scheduleAttackStage();
@@ -234,7 +241,7 @@ export default class Envelope extends React.Component {
         this.scheduleDecayStage();
       }
     } else if (this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime < this.state.decayStageEnd) {
-      console.log('decay')
+
       if (this.props.parameterValues.decayTime !== prevProps.parameterValues.decayTime) {
         this.param.cancelAndHoldAtTime(0);
         this.scheduleDecayStage();
@@ -252,32 +259,8 @@ export default class Envelope extends React.Component {
         this.scheduleDecayStage();
       }
     } else if (this.audioContext.currentTime >= this.state.attackStageEnd && this.audioContext.currentTime >= this.state.decayStageEnd && this.props.gateStartTime) {
-      console.log(sustain)
-      console.log('current')
-      console.log(this.audioContext.currentTime)
-      console.log('releasestageend')
-      console.log(this.state.releaseStageEnd)
-      console.log('gatestarttime')
-      console.log(this.props.gateStartTime)
       if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
         this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
-      } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
-        this.param.cancelAndHoldAtTime(0);
-        this.scheduleDecayStage();
-      } else if (this.props.parameterValues.baseValue !== prevProps.parameterValues.baseValue) {
-        this.param.cancelScheduledValues(0);
-        this.param.setValueAtTime(this.param.value, this.audioContext.currentTime);
-        this.scheduleDecayStage();
-      }
-    } else if (this.state.releaseStageEnd && this.audioContext.currentTime < this.state.releaseStageEnd) {
-      console.log('release')
-      if (this.props.parameterValues.sustainLevel !== prevProps.parameterValues.sustainLevel) {
-        // this.
-        this.param.setValueAtTime(this.getValueToDecayTo(), this.audioContext.currentTime);
-      } else if (this.props.parameterValues.releaseTime !== prevProps.parameterValues.releaseTime) {
-        console.log('asdfasdfasd')
-        this.param.cancelAndHoldAtTime(0);
-        this.scheduleReleaseStage(this.audioContext.currentTime);
       } else if (this.props.parameterValues.envelopeAmount !== prevProps.parameterValues.envelopeAmount) {
         this.param.cancelAndHoldAtTime(0);
         this.scheduleDecayStage();
