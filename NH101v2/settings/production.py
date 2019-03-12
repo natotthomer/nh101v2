@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nh101v2.herokuapp.com']
+ALLOWED_HOSTS = ['nh101v2.herokuapp.com', 'localhost']
 
 
 # Application definition
