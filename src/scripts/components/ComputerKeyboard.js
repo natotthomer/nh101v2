@@ -7,7 +7,7 @@ export default class ComputerKeyboard extends Component {
     super(props)
 
     this.state = {
-      hasAudioPermissions: false
+      audioContextInitialized: false
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this)
@@ -23,6 +23,12 @@ export default class ComputerKeyboard extends Component {
     if (this.props.currentKeys.indexOf(event.keyCode) < 0 && REGISTERED_KEYS.includes(event.keyCode)) {
       this.props.keyDown(event.keyCode)
       this.props.updateGateStartTime({ value: this.props.audioContext.currentTime })
+    }
+
+    if (!this.state.audioContextInitialized) {
+      this.props.audioContext.resume().then(() => {
+        this.setState({ audioContextInitialized: true });
+      });
     }
   }
 
