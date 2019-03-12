@@ -4,6 +4,7 @@ import {
 } from '../constants/synth-constants'
 
 const _synthBaseState = {
+  voices: 2,
   vcos: [
     {
       oscillatorOctave: 4,

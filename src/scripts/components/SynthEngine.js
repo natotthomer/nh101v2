@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import VoiceContainer from './audio-components/Voice-container'
 import ControlInterfaceContainer from './ControlInterface-container'
+import VoiceAllocatorContainer from './audio-components/VoiceAllocator-container';
 
 export default class SynthEngine extends Component {
   // componentDidUpdate (prevProps, prevState) {
@@ -19,6 +20,7 @@ export default class SynthEngine extends Component {
           <div id="filter-chart" style={{ height: "200px", width: "50%" }} />
           <div id="amp-chart" style={{ height: "200px", width: "50%" }} />
         </div>
+        <VoiceAllocatorContainer />
         <VoiceContainer audioContext={this.props.audioContext} />
         <ControlInterfaceContainer />
         <div>Current Controller: {this.props.controller}</div>
