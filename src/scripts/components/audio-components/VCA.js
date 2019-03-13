@@ -7,9 +7,16 @@ export default class VCA extends React.Component {
   constructor (props) {
     super(props)
 
+    this.state = {
+      envelopeIsOn: false
+    };
+
+    this.envelope = React.createRef();
+    
     this.setUpAmplifier = this.setUpAmplifier.bind(this)
     this.renderChildren = this.renderChildren.bind(this)
     this.getOutput = this.getOutput.bind(this)
+    this.toggleEnvelopeIsOn = this.toggleEnvelopeIsOn.bind(this);
 
     this.setUpAmplifier()
   }
@@ -34,6 +41,12 @@ export default class VCA extends React.Component {
     return this.amplifier
   }
 
+  toggleEnvelopeIsOn () {
+    this.setState({
+      envelopeIsOn: !this.state.envelopeIsOn
+    });
+  }
+
   renderChildren () {
     return React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
@@ -52,7 +65,11 @@ export default class VCA extends React.Component {
 
     return (
       <React.Fragment>
-        <Envelope param={this.amplifier.gain} {...envelopeProps} />
+        <Envelope
+          ref={this.envelope}
+          toggleIsOn={this.toggleEnvelopeIsOn}
+          param={this.amplifier.gain}
+          {...envelopeProps} />
         {this.renderChildren()}
       </React.Fragment>
     )

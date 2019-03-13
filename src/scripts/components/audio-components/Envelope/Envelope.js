@@ -70,13 +70,19 @@ export default class Envelope extends React.Component {
       decayTime,
     } = this.props.parameterValues
 
+    // if (this.props.parameterValues.envelopeRetrigger) {
+    //   this.param.setTargetAtTime(this.props.parameterValues.baseValue, this.audioContext.currentTime, 0.015);
+    // }
+
     this.setState({
       attackStageEnd: this.audioContext.currentTime + attackTime, 
       decayStageEnd: this.audioContext.currentTime + attackTime + decayTime, 
       sustainStageEnd: null,
       releaseStageEnd: null
     })
-    this.resetToBaseValue()
+    if (this.param.value !== this.props.parameterValues.baseValue) {
+      this.resetToBaseValue()
+    }
     this.scheduleAttackStage()
     this.scheduleDecayStage()
   }
@@ -103,7 +109,7 @@ export default class Envelope extends React.Component {
         break;
       }
       default: {
-        this.param.setValueAtTime(newValue, options.startTime || this.audioContext.currentTime);
+        this.param.setTargetAtTime(newValue, options.startTime || this.audioContext.currentTime, 1);
         break;
       }
     }
@@ -186,12 +192,12 @@ export default class Envelope extends React.Component {
     );
   }
 
-  scheduleReleaseStage (gateEndTime) {
+  scheduleReleaseStage () {
     const { baseValue, releaseTime, envelopeResponseType } = this.props.parameterValues;
 
     this.updateAudioParam(
       baseValue, 
-      { 
+      {
         slopeType: envelopeResponseType,
         startValue: this.param.value,
         stageLength: releaseTime,

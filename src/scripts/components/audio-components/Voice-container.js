@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { connectAdvanced } from 'react-redux'
 
 import Voice from './Voice'
 
@@ -7,4 +7,4 @@ const mapStateToProps = ({ keyboard, synth }) => ({
   synth
 })
 
-export default connect(mapStateToProps)(Voice)
+export default connectAdvanced(mapStateToProps, { withRef: true })(Voice);

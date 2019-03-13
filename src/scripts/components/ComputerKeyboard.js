@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import debounce from 'lodash/debounce'
 
 import { REGISTERED_KEYS } from '../constants/keyboard-constants'
 

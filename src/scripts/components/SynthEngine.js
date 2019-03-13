@@ -20,7 +20,7 @@ export default class SynthEngine extends Component {
           <div id="filter-chart" style={{ height: "200px", width: "50%" }} />
           <div id="amp-chart" style={{ height: "200px", width: "50%" }} />
         </div>
-        <VoiceAllocatorContainer />
+        <VoiceAllocatorContainer audioContext={this.props.audioContext} />
         <VoiceContainer audioContext={this.props.audioContext} />
         <ControlInterfaceContainer />
         <div>Current Controller: {this.props.controller}</div>

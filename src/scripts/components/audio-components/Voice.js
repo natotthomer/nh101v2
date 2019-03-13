@@ -5,49 +5,74 @@ import VCA from './VCA'
 import VCF from './VCF'
 import Echo from './Echo'
 
-const Voice = props => {
-  const { audioContext, currentKeys, synth, gateStartTime } = props
-    
-  const childrenProps = {
-    vcaProps: { 
-      audioContext: audioContext,
-      currentKeys: currentKeys,
-      parameterValues: synth.vca,
-      gateStartTime: gateStartTime
-    },
-    vcfProps: {
-      audioContext: audioContext,
-      currentKeys: currentKeys,
-      parameterValues: synth.vcf,
-      gateStartTime: gateStartTime
-    },
-    vcoProps: synth.vcos.map(vcoData => ({ 
-      audioContext: audioContext,
-      currentKeys: currentKeys,
-      parameterValues: vcoData 
-    })),
-    echoProps: {
-      audioContext: audioContext,
-      currentKeys: currentKeys,
-      parameterValues: synth.echo
-    }
-  }
+export default class Voice extends Component {
+  constructor(props) {
+    super(props);
 
-  const { vcaProps, vcoProps, vcfProps, echoProps } = childrenProps
+    this.echo = React.createRef();
+    this.vca = React.createRef();
+    this.vcf = React.createRef();
+
+    this.props.synth.vcos.forEach((vco, idx) => {
+      this[`vco${idx}`] = React.createRef();
+    });
+  }
   
-  const vcos = vcoProps.map((vcoData, idx) => <VCO key={idx} {...vcoData} />)
+  render () {
+    const { audioContext, currentKeys, synth, gateStartTime } = this.props
+    
+    const childrenProps = {
+      vcaProps: {
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        parameterValues: synth.vca,
+        gateStartTime: gateStartTime
+      },
+      vcfProps: {
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        parameterValues: synth.vcf,
+        gateStartTime: gateStartTime
+      },
+      vcoProps: synth.vcos.map(vcoData => ({
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        parameterValues: vcoData 
+      })),
+      echoProps: {
+        audioContext: audioContext,
+        currentKeys: currentKeys,
+        parameterValues: synth.echo
+      }
+    }
   
-  return (
-    <React.Fragment>
-      <Echo {...echoProps} parentNode={audioContext.destination}>
-        <VCA {...vcaProps}>
-          <VCF {...vcfProps}>
-            {vcos}
-          </VCF>
-        </VCA>
-      </Echo>
-    </React.Fragment>
-  )
+    const { vcaProps, vcoProps, vcfProps, echoProps } = childrenProps
+    
+    const vcos = vcoProps.map((vcoData, idx) => {
+      return (
+        <VCO ref={this[`vco${idx}`]} key={idx} {...vcoData} />
+      )
+    })
+    
+    return (
+      <React.Fragment>
+        <div ref={this.echo}>asdfh</div>
+        <Echo
+          parentNode={audioContext.destination}
+          {...echoProps}>
+          <VCA
+            ref={this.vca}
+            {...vcaProps}>
+            <VCF
+              ref={this.vcf}
+              {...vcfProps}>
+              {vcos}
+            </VCF>
+          </VCA>
+        </Echo>
+      </React.Fragment>
+    )
+  }
 }
 
-export default Voice
+// export default Voice
