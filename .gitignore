@@ -5,6 +5,7 @@ NH101v2/settings/local.py
 static/webpack_bundles
 webpack-stats.json
 node_modules/
+*.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
