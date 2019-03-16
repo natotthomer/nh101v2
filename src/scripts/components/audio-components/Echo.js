@@ -50,8 +50,6 @@ export default class Echo extends React.Component {
     this.echo.connect(this.echoVolume)
     this.echoVolume.connect(this.output)
 
-
-
     this.output.connect(parentNode)
   }
 
@@ -66,7 +64,6 @@ export default class Echo extends React.Component {
   render () {
     return (
       <div>
-        Echo
         {this.renderChildren()}
       </div>
     )

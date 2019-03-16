@@ -4,24 +4,24 @@ import {
 } from '../constants/synth-constants'
 
 const _synthBaseState = {
-  voices: 2,
+  voices: 6,
   vcos: [
     {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sawtooth',
+      oscillatorWaveform: 'sine',
       oscillatorGain: 0.5,
       id: 0
     }, {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sawtooth',
+      oscillatorWaveform: 'sine',
       oscillatorGain: 0.0,
       id: 1
     }, {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sawtooth',
+      oscillatorWaveform: 'sine',
       oscillatorGain: 0.0,
       id: 2
     }

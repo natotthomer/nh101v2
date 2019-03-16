@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Envelope from './Envelope/Envelope'
-import { buildCanvas } from '../../synth-charts'
+// import { buildCanvas } from '../../synth-charts'
 
 export default class VCA extends React.Component {
   constructor (props) {
@@ -16,18 +16,17 @@ export default class VCA extends React.Component {
     this.setUpAmplifier = this.setUpAmplifier.bind(this)
     this.renderChildren = this.renderChildren.bind(this)
     this.getOutput = this.getOutput.bind(this)
-    this.toggleEnvelopeIsOn = this.toggleEnvelopeIsOn.bind(this);
 
     this.setUpAmplifier()
   }
   
-  componentDidMount () {
-    buildCanvas('amp-chart', {
-      param: this.amplifier.gain,
-      moduleName: 'VCA',
-      paramName: 'gain'
-    })
-  }
+  // componentDidMount () {
+  //   buildCanvas('amp-chart', {
+  //     param: this.amplifier.gain,
+  //     moduleName: 'VCA',
+  //     paramName: 'gain'
+  //   })
+  // }
 
   setUpAmplifier () {
     this.audioContext = this.props.audioContext
@@ -41,7 +40,7 @@ export default class VCA extends React.Component {
     return this.amplifier
   }
 
-  toggleEnvelopeIsOn () {
+  getEnvelopeIsOn () {
     this.setState({
       envelopeIsOn: !this.state.envelopeIsOn
     });
@@ -58,7 +57,7 @@ export default class VCA extends React.Component {
   render () {
     const envelopeProps = {
       audioContext: this.audioContext,
-      currentKeys: this.props.currentKeys,
+      currentKey: this.props.currentKey,
       gateStartTime: this.props.gateStartTime,
       parameterValues: this.props.parameterValues.gain
     }
@@ -67,7 +66,6 @@ export default class VCA extends React.Component {
       <React.Fragment>
         <Envelope
           ref={this.envelope}
-          toggleIsOn={this.toggleEnvelopeIsOn}
           param={this.amplifier.gain}
           {...envelopeProps} />
         {this.renderChildren()}

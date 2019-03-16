@@ -18,7 +18,7 @@ export default class VCO extends React.Component {
     this.audioContext = this.props.audioContext
     this.oscillator = this.audioContext.createOscillator()
     this.oscillator.start()
-    this.oscillator.type = 'sawtooth'
+    this.oscillator.type = 'sine'
     this.oscillator.frequency.value = 1000
 
     this.amplifier = this.audioContext.createGain()
@@ -29,8 +29,7 @@ export default class VCO extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { currentKeys, parameterValues } = this.props
-    const currentKey = currentKeys[currentKeys.length - 1]
+    const { currentKey, parameterValues } = this.props
     const indexOfKey = REGISTERED_KEYS.indexOf(currentKey)
     if (indexOfKey >= 0) {
       const { oscillatorDetune, oscillatorOctave, oscillatorWaveform } = parameterValues

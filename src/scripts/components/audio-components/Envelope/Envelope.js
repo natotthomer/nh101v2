@@ -41,15 +41,14 @@ export default class Envelope extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { currentKeys, parameterValues } = this.props
-    const currentKey = currentKeys[currentKeys.length - 1]
-    const prevKeys = prevProps.currentKeys
-    const prevKey = prevProps.currentKeys[prevProps.currentKeys.length - 1]
+    const { currentKey, parameterValues } = this.props
+    const prevKey = prevProps.currentKey
 
     // condition declaration
-    const prevKeysAndCurrentKeysAreNotTheSame = !(currentKeys.every((key, idx) => key === prevKeys[idx]) && currentKeys.length === prevKeys.length)
+    const prevKeyAndCurrentKeyAreNotTheSame = currentKey !== prevKey;
+    // const prevKeysAndCurrentKeysAreNotTheSame = !(currentKeys.every((key, idx) => key === prevKeys[idx]) && currentKeys.length === prevKeys.length)
     const firstNote = currentKey !== prevKey && [undefined, null].includes(prevKey)
-    const hasEnvelopeBeenTriggered = ((prevKeysAndCurrentKeysAreNotTheSame && parameterValues.envelopeRetrigger) || firstNote ) && currentKeys.length > 0
+    const hasEnvelopeBeenTriggered = ((prevKeyAndCurrentKeyAreNotTheSame && parameterValues.envelopeRetrigger) || firstNote ) && currentKey
     const hasKeyReleased = currentKey !== prevKey && [undefined, null].includes(currentKey)
 
     const hasParameterValuesChanged = Object.keys(prevProps.parameterValues).some(key => prevProps.parameterValues[key] !== this.props.parameterValues[key])
@@ -124,11 +123,11 @@ export default class Envelope extends React.Component {
   }
 
   releaseEnvelope () {
-    this.setState({ 
-      attackStageEnd: null, 
-      decayStageEnd: null, 
-      releaseStageEnd: this.audioContext.currentTime + this.props.parameterValues.releaseTime, 
-      sustainStageEnd: this.audioContext.currentTime 
+    this.setState({
+      attackStageEnd: null,
+      decayStageEnd: null,
+      releaseStageEnd: this.audioContext.currentTime + this.props.parameterValues.releaseTime,
+      sustainStageEnd: this.audioContext.currentTime
     });
     this.resetAtValue();
     this.scheduleReleaseStage();
@@ -183,7 +182,7 @@ export default class Envelope extends React.Component {
     
     this.updateAudioParam(
       valueToDecayTo,
-      { 
+      {
         slopeType: envelopeResponseType,
         startValue: valueToAttackTo,
         stageLength: decayTime,
@@ -194,9 +193,9 @@ export default class Envelope extends React.Component {
 
   scheduleReleaseStage () {
     const { baseValue, releaseTime, envelopeResponseType } = this.props.parameterValues;
-
+    
     this.updateAudioParam(
-      baseValue, 
+      baseValue,
       {
         slopeType: envelopeResponseType,
         startValue: this.param.value,

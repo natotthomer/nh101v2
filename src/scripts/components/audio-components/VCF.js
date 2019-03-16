@@ -2,7 +2,7 @@ import React from 'react'
 
 import Envelope from './Envelope/Envelope'
 import { calculateAttackFrequency, calculateSustainGain } from '../../utils'
-import { buildCanvas } from '../../synth-charts'
+// import { buildCanvas } from '../../synth-charts'
 
 export default class VCF extends React.Component {
   constructor (props) {
@@ -21,12 +21,13 @@ export default class VCF extends React.Component {
     this.filter.connect(this.props.parentNode)
   }
 
-  componentDidMount () {
-    buildCanvas('filter-chart', {
-      param: this.filter.frequency,
-      moduleName: 'VCF',
-      paramName: 'frequency'
-    })  }
+  // componentDidMount () {
+  //   buildCanvas('filter-chart', {
+  //     param: this.filter.frequency,
+  //     moduleName: 'VCF',
+  //     paramName: 'frequency'
+  //   })  
+  // }
 
   componentDidUpdate (prevProps, nextProps) {
     if (prevProps.parameterValues.Q.baseValue !== this.props.parameterValues.Q.baseValue) {
@@ -45,7 +46,7 @@ export default class VCF extends React.Component {
   render () {
     const envelopeProps = {
       audioContext: this.audioContext,
-      currentKeys: this.props.currentKeys,
+      currentKey: this.props.currentKey,
       parameterValues: this.props.parameterValues.frequency,
       gateStartTime: this.props.gateStartTime
     }

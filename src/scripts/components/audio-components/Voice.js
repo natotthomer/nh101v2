@@ -16,32 +16,51 @@ export default class Voice extends Component {
     this.props.synth.vcos.forEach((vco, idx) => {
       this[`vco${idx}`] = React.createRef();
     });
+
+    this.isVoiceOn = this.isVoiceOn.bind(this);
+    this.isEnvelopeOn = this.isEnvelopeOn.bind(this);
+  }
+
+  isVoiceOn () {
+    const isAmplifierEnvelopeOn = this.isEnvelopeOn(this.vca);
+    const isFilterEnvelopeOn = this.isEnvelopeOn(this.vcf);
+
+    return isAmplifierEnvelopeOn || isFilterEnvelopeOn
+  }
+
+  isEnvelopeOn (module) {
+    if (module && module.current.envelope.current) {
+      const envelopeState = module.current.envelope.current.state
+
+      return !!envelopeState.attackStageEnd || !!envelopeState.releaseStageEnd;
+    }
+    return false
   }
   
   render () {
-    const { audioContext, currentKeys, synth, gateStartTime } = this.props
+    const { audioContext, currentKey, synth, gateStartTime } = this.props
     
     const childrenProps = {
       vcaProps: {
-        audioContext: audioContext,
-        currentKeys: currentKeys,
+        audioContext,
+        currentKey,
         parameterValues: synth.vca,
         gateStartTime: gateStartTime
       },
       vcfProps: {
-        audioContext: audioContext,
-        currentKeys: currentKeys,
+        audioContext,
+        currentKey,
         parameterValues: synth.vcf,
         gateStartTime: gateStartTime
       },
       vcoProps: synth.vcos.map(vcoData => ({
-        audioContext: audioContext,
-        currentKeys: currentKeys,
+        audioContext,
+        currentKey,
         parameterValues: vcoData 
       })),
       echoProps: {
-        audioContext: audioContext,
-        currentKeys: currentKeys,
+        audioContext,
+        currentKey,
         parameterValues: synth.echo
       }
     }
@@ -56,7 +75,7 @@ export default class Voice extends Component {
     
     return (
       <React.Fragment>
-        <div ref={this.echo}>asdfh</div>
+        <div ref={this.echo}></div>
         <Echo
           parentNode={audioContext.destination}
           {...echoProps}>

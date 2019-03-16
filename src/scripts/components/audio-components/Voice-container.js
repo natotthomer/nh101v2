@@ -1,10 +1,16 @@
-import { connectAdvanced } from 'react-redux'
+import { connect } from 'react-redux'
 
 import Voice from './Voice'
 
-const mapStateToProps = ({ keyboard, synth }) => ({
-  ...keyboard,
+const mapStateToProps = ({ synth }) => ({
   synth
 })
 
-export default connectAdvanced(mapStateToProps, { withRef: true })(Voice);
+const mergeProps = (propsFromState, propsFromDispatch, passedProps) => {
+  return {
+    ...propsFromState,
+    ...passedProps
+  }
+}
+
+export default connect(mapStateToProps, null, mergeProps, { withRef: true })(Voice);
