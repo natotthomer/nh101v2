@@ -19,30 +19,16 @@ export default class VoiceAllocator extends React.Component {
 
     const prevPropsSorted = prevProps.currentKeys.sort(sortNumbersCorrectly);
     const thisPropsSorted = this.props.currentKeys.sort(sortNumbersCorrectly);
-
-    if (!isEqual(prevPropsSorted, thisPropsSorted)) {
-      // const voicesOn 
-      for (let idx = 0; idx < this.props.voices; idx++) {
-        
-        // console.log(this[`voice${idx}`].wrappedInstance)
-        // console.log(this[`voice${idx}`].wrappedInstance.isVoiceOn())
-        // window.setTimeout(() => {
-        //   console.log(this[`voice${idx}`].wrappedInstance.isVoiceOn())
-        // }, 1)
-      }
-    }
   }
   
   render () {
     const voices = [];
     if (this.props.voices) {
-      console.log(this.props.currentKeys)
       const usedKeys = {};
       const unusedKeys = [...this.props.currentKeys];
 
       for (let idx = 0; idx < this.props.voices; idx++) {
         const voice = this[`voice${idx}`];
-        // console.log(voice.props ? voice.props.currentKey : 'yo')
         if (voice.props && voice.props.currentKey && this.props.currentKeys.includes(voice.props.currentKey)) {
           usedKeys[idx] = voice.props.currentKey;
           const idxOfKey = unusedKeys.indexOf(voice.props.currentKey);
@@ -53,21 +39,14 @@ export default class VoiceAllocator extends React.Component {
 
       let addedKeys = 0;
       for (let idx = 0; idx < this.props.voices; idx++) {
-        // console.log(this.props.currentKeys[idx])
-
         let currentKey
 
-        // console.log(unusedKeys)
-
         if (usedKeys[idx]) {
-          console.log(usedKeys[idx], 'poo')
           currentKey = usedKeys[idx];
         } else if (unusedKeys.length) {
           currentKey = unusedKeys[addedKeys];
           addedKeys++;
         }
-        
-        // console.log(this.props.currentKeys)
 
         voices.push(
           <VoiceContainer
