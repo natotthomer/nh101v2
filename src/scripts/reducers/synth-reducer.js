@@ -9,19 +9,19 @@ const _synthBaseState = {
     {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sine',
+      oscillatorWaveform: 'triangle',
       oscillatorGain: 0.5,
       id: 0
     }, {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sine',
+      oscillatorWaveform: 'triangle',
       oscillatorGain: 0.0,
       id: 1
     }, {
       oscillatorOctave: 4,
       oscillatorDetune: 0,
-      oscillatorWaveform: 'sine',
+      oscillatorWaveform: 'triangle',
       oscillatorGain: 0.0,
       id: 2
     }

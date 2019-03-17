@@ -18,7 +18,7 @@ export default class VCO extends React.Component {
     this.audioContext = this.props.audioContext
     this.oscillator = this.audioContext.createOscillator()
     this.oscillator.start()
-    this.oscillator.type = 'sine'
+    this.oscillator.type = 'triangle'
     this.oscillator.frequency.value = 1000
 
     this.amplifier = this.audioContext.createGain()
